@@ -61,7 +61,7 @@ export default function App() {
           name="user-circle-o"
           size={24}
           color="#333"
-          onPress={() => router.navigate("profile")}
+          onPress={() => router.navigate("profile/profile")}
         />
       </View>
       <View style={styles.searchContainer}>
