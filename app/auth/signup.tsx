@@ -49,7 +49,7 @@ export default function Signup() {
       </View>
 
       <TouchableOpacity
-        style={styles.inBtn}>
+        style={styles.inBtn} onPress={() => router.navigate('/profile/profile')}>
         <Text style={styles.inText}>Sign Up</Text>
       </TouchableOpacity>
 

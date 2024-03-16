@@ -34,7 +34,7 @@ export default function Signin() {
           secureTextEntry></TextInput>
       </View>
 
-      <TouchableOpacity style={styles.inBtn}>
+      <TouchableOpacity style={styles.inBtn} onPress={() => router.navigate('/profile/profile')}>
         <Text style={styles.inText}>Sign In</Text>
       </TouchableOpacity>
 
