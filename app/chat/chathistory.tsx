@@ -1,4 +1,5 @@
 import React from "react";
+import { Stack, router } from "expo-router";
 import {
   SafeAreaView,
   View,
@@ -9,6 +10,7 @@ import {
   TextInput,
   StatusBar,
 } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
 import { format } from "date-fns";
 
 // Define the type for each chat history item
@@ -32,10 +34,15 @@ const chatHistoryData: ChatHistoryItem[] = [
   // ... add other history items
 ];
 
-const ChatHistoryScreen = () => {
+export default function App() {
   const renderChatHistoryItem = ({ item }: { item: ChatHistoryItem }) => {
     return (
       <View style={styles.chatItem}>
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+        />
         <Image source={{ uri: item.avatar }} style={styles.avatar} />
         <View style={styles.textContainer}>
           <Text style={styles.name}>{item.name}</Text>
@@ -48,7 +55,15 @@ const ChatHistoryScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>History</Text>
+        <Icon
+          name="user-circle-o"
+          size={24}
+          color="#333"
+          onPress={() => router.navigate("profile")}
+        />
+      </View>
       <View style={styles.searchContainer}>
         <TextInput placeholder="Search" style={styles.searchInput} />
       </View>
@@ -59,12 +74,23 @@ const ChatHistoryScreen = () => {
       />
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 16,
+    backgroundColor: "#FFFFFF",
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
   },
   searchContainer: {
     backgroundColor: "#FFFFFF",
@@ -109,5 +135,3 @@ const styles = StyleSheet.create({
   },
   // ... Add more styles as needed for the design
 });
-
-export default ChatHistoryScreen;

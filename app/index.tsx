@@ -5,7 +5,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 
 export default function App() {
   const [page, setPage] = useState(0);
-
+  router.navigate("chat/chathistory");
   return (
     <View style={styles.container}>
       <Stack.Screen
