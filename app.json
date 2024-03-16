@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "com.jide.me",
     "name": "jide-frontend",
     "slug": "jide-frontend",
     "version": "1.0.0",
