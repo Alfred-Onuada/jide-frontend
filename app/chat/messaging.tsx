@@ -129,10 +129,12 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, isSender }) => {
 };
 
 // MessagingScreen component
-const MessagingScreen: React.FC<MessagingScreenProps> = ({ route }) => {
+const MessagingScreen: React.FC<MessagingScreenProps> = ({
+  route,
+}: MessagingScreenProps) => {
   const chatId = route?.params?.chatId;
   console.log(route);
-  const currentUserId = "user123"; // Replace with the current user's identifier
+  const currentUserId = "user123";
 
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputText, setInputText] = useState<string>("");

@@ -27,6 +27,10 @@ const BottomBar = () => {
         <FontAwesome name="user" size={24} color="#333" />
       </TouchableOpacity>
 
+      <TouchableOpacity onPress={handlePressProfile}>
+        <FontAwesome name="history" size={24} color="#333" />
+      </TouchableOpacity>
+
       {/* Add other icons as needed */}
     </View>
   );

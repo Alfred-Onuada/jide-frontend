@@ -1,6 +1,6 @@
-import { Stack, router } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { Stack, router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 
 export default function Selection() {
   return (
@@ -11,18 +11,24 @@ export default function Selection() {
         }}
       />
 
-      <Image source={require('./../../assets/icon.png')}></Image>
+      <Image source={require("./../../assets/icon.png")}></Image>
 
       <Text style={styles.welcome}>Welcome to SmartDoc</Text>
 
-      <TouchableOpacity style={styles.inBtn} onPress={() => router.navigate('/auth/signin')}>
+      <TouchableOpacity
+        style={styles.inBtn}
+        onPress={() => router.navigate("/auth/signin")}
+      >
         <Text style={styles.inText}>Sign In</Text>
-        </TouchableOpacity>
-
-      <TouchableOpacity style={styles.upBtn} onPress={() => router.navigate('/auth/signup')}>
-        <Text style={styles.upText}>Sign Up</Text>
       </TouchableOpacity>
-      
+
+      <TouchableOpacity
+        style={styles.upBtn}
+        onPress={() => router.navigate("/auth/signup")}
+      >
+        <Text style={styles.upText}>Create Student Account</Text>
+      </TouchableOpacity>
+
       <StatusBar style="auto" />
     </View>
   );
@@ -31,40 +37,40 @@ export default function Selection() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
+    backgroundColor: "#fff",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   welcome: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
     marginTop: 40,
-    marginBottom: 60
+    marginBottom: 60,
   },
   inBtn: {
-    width: '90%',
+    width: "90%",
     borderRadius: 20,
-    backgroundColor: '#2972FE',
-    marginVertical: 10
+    backgroundColor: "#2972FE",
+    marginVertical: 10,
   },
   inText: {
-    textAlign: 'center',
+    textAlign: "center",
     paddingVertical: 15,
-    color: '#fff',
-    fontSize: 18
+    color: "#fff",
+    fontSize: 18,
   },
   upBtn: {
-    width: '90%',
+    width: "90%",
     borderRadius: 20,
     marginVertical: 10,
-    borderColor: '#2972FE',
-    borderWidth: 1
+    borderColor: "#2972FE",
+    borderWidth: 1,
   },
   upText: {
-    textAlign: 'center',
+    textAlign: "center",
     paddingVertical: 15,
-    color: '#2972FE',
-    fontSize: 18
-  }
+    color: "#2972FE",
+    fontSize: 18,
+  },
 });
