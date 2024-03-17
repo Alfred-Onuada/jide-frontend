@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, router } from "expo-router";
+import { Stack, useRouter, useLocalSearchParams } from "expo-router";
 import {
   SafeAreaView,
   View,
@@ -9,9 +9,11 @@ import {
   Image,
   TextInput,
   StatusBar,
+  TouchableOpacity,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { format } from "date-fns";
+import BottomBar from "../../components/BottomBar";
 
 // Define the type for each chat history item
 type ChatHistoryItem = {
@@ -35,21 +37,33 @@ const chatHistoryData: ChatHistoryItem[] = [
 ];
 
 export default function App() {
+  var router = useRouter();
+  var localparam = useLocalSearchParams();
   const renderChatHistoryItem = ({ item }: { item: ChatHistoryItem }) => {
     return (
-      <View style={styles.chatItem}>
-        <Stack.Screen
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Image source={{ uri: item.avatar }} style={styles.avatar} />
-        <View style={styles.textContainer}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.lastMessage}>{item.lastMessage}</Text>
+      <TouchableOpacity
+        onPress={() =>
+          router.push({
+            pathname: `chat/messaging?chatID=${item.id}`,
+            params: localparam,
+          })
+        }
+      >
+        <View style={styles.chatItem}>
+          <Stack.Screen
+            options={{
+              headerShown: false,
+            }}
+          />
+
+          <Image source={{ uri: item.avatar }} style={styles.avatar} />
+          <View style={styles.textContainer}>
+            <Text style={styles.name}>{item.name}</Text>
+            <Text style={styles.lastMessage}>{item.lastMessage}</Text>
+          </View>
+          <Text style={styles.time}>{format(item.dateTime, "p")}</Text>
         </View>
-        <Text style={styles.time}>{format(item.dateTime, "p")}</Text>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -72,6 +86,7 @@ export default function App() {
         keyExtractor={(item) => item.id}
         renderItem={renderChatHistoryItem}
       />
+      <BottomBar />
     </SafeAreaView>
   );
 }
@@ -80,6 +95,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
+    paddingBottom: 50,
   },
   header: {
     flexDirection: "row",
