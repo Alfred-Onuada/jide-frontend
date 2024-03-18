@@ -48,7 +48,7 @@ export async function handleRegisterUser(
       API.REGISTER_USER,
       request
     );
-    if (response.status === 200) {
+    if (response.status === 200 || response.status === 201) {
       saveToLocalStorage("user", response.data.data);
       return { status: true, message: "Success", data: response.data.data };
     } else {
