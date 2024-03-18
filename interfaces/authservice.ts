@@ -44,7 +44,10 @@ export async function handleRegisterUser(
   request: UserFormData
 ): Promise<UserRegistrationResponse> {
   try {
-    const response: AxiosResponse = await axios.post(API.LOGIN, request);
+    const response: AxiosResponse = await axios.post(
+      API.REGISTER_USER,
+      request
+    );
     if (response.status === 200) {
       saveToLocalStorage("user", response.data.data);
       return { status: true, message: "Success", data: response.data.data };
@@ -57,9 +60,8 @@ export async function handleRegisterUser(
     }
   } catch (error) {
     return {
-        status: false,
-        message: "An unexpected error occurred",
-        };
-    
+      status: false,
+      message: "An unexpected error occurred",
+    };
   }
 }
