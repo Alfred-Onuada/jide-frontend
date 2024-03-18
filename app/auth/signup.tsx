@@ -1,106 +1,198 @@
-import { Link, Stack, router } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput } from "react-native";
+import { Stack, router } from "expo-router";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
+import { UserFormData } from "../../types/RegistrationTypes";
+import { handleRegisterUser } from "../../interfaces/authservice";
 
-export default function Signup() {
+const CreateAccountScreen = () => {
+  const [userData, setUserData] = useState<UserFormData>({
+    fullName: "",
+    matricNo: "",
+    hospitalCardNo: "",
+    password: "",
+    confirmPassword: "",
+    email: "",
+  } as UserFormData);
+
+  const handleCreateAccount = async () => {
+    var response = await handleRegisterUser(userData);
+    if (!response.status) {
+      console.log(response);
+      return;
+    }
+    router.navigate("/auth/signin");
+  };
+
   return (
-    <View style={styles.container}>
-      <Stack.Screen
-        options={{
-          headerShown: false
-        }}
-      />
-
-      <Image
-        source={require("./../../assets/icon.png")}
-        style={{
-          width: 200,
-          height: 200,
-          resizeMode: "cover",
-          marginVertical: 50,
-        }}
-      ></Image>
-      <Text style={{ fontSize: 18, marginTop: 20, marginBottom: 30 }}>
-        Sign Up For Free
-      </Text>
-
-      <View
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          marginBottom: 10,
-        }}
-      >
-        <Text style={styles.inputLabel}>Email*</Text>
-        <TextInput
-          placeholder="john@google.com"
-          style={styles.input}
-        ></TextInput>
+    <ScrollView style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Create Student Account</Text>
+        <Text style={styles.headerSubtitle}>
+          Enter with your Babcock Credentials
+        </Text>
       </View>
 
-      <View style={{ width: "100%", display: "flex", alignItems: "center" }}>
-        <Text style={styles.inputLabel}>Password*</Text>
-        <TextInput
-          placeholder="john@google.com"
-          style={styles.input}
-          secureTextEntry
-        ></TextInput>
-      </View>
-
-      <TouchableOpacity
-        style={styles.inBtn} onPress={() => router.navigate('/profile/profile')}>
-        <Text style={styles.inText}>Sign Up</Text>
+      <TouchableOpacity style={styles.profileUpload}>
+        <Image
+          style={styles.profileUploadIcon}
+          source={require("./../../assets/upload.png")} // replace with your local asset path or uri
+        />
+        <Text style={styles.profileUploadText}>Upload Photo Profile</Text>
       </TouchableOpacity>
 
-      <Text style={{ fontSize: 16, marginTop: 10 }}>
-        Already have an account?{" "}
-        <Link href={"/auth/signin"} style={{ color: "#2972FE" }}>
-          Sign In
-        </Link>
-      </Text>
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputTitle}>School FullName</Text>
+        <TextInput
+          placeholder="School Fullname"
+          value={userData.fullName}
+          onChangeText={(value) =>
+            setUserData({ ...userData, fullName: value })
+          }
+          style={styles.input}
+        />
+        <Text style={styles.inputTitle}>Matric No</Text>
 
-      <StatusBar style="auto" />
-    </View>
+        <TextInput
+          placeholder="Matric No"
+          value={userData.matricNo}
+          onChangeText={(value) =>
+            setUserData({ ...userData, matricNo: value })
+          }
+          style={styles.input}
+        />
+        <Text style={styles.inputTitle}>Hospital Card No</Text>
+
+        <TextInput
+          placeholder="Hospital Card No"
+          value={userData.hospitalCardNo}
+          onChangeText={(value) =>
+            setUserData({ ...userData, hospitalCardNo: value })
+          }
+          style={styles.input}
+        />
+        <Text style={styles.inputTitle}>Password</Text>
+
+        <TextInput
+          placeholder="Password"
+          value={userData.password}
+          onChangeText={(value) =>
+            setUserData({ ...userData, password: value })
+          }
+          style={styles.input}
+          secureTextEntry
+        />
+        <Text style={styles.inputTitle}>Confirm Password</Text>
+
+        <TextInput
+          placeholder="Confirm Password"
+          value={userData.confirmPassword}
+          onChangeText={(value) =>
+            setUserData({ ...userData, confirmPassword: value })
+          }
+          style={styles.input}
+          secureTextEntry
+        />
+      </View>
+
+      <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
+        <Text style={styles.buttonText}>Create Student Account</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    display: "flex",
-    alignItems: "center",
-  },
-  image: {
-    width: "40%",
-  },
-  inBtn: {
-    width: "90%",
-    borderRadius: 20,
-    backgroundColor: "#2972FE",
-    marginVertical: 10,
-  },
-  inText: {
-    textAlign: "center",
-    paddingVertical: 15,
-    color: "#fff",
-    fontSize: 18,
+  inputContainer: {
+    marginTop: 20,
+    paddingHorizontal: 5,
   },
   input: {
-    width: "90%",
-    height: 50,
+    backgroundColor: "#FFF", // assuming a white background
+    borderColor: "black", // light grey border
     borderWidth: 1,
-    borderColor: "#A9A9A9",
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    marginBottom: 15,
-    fontSize: 18,
+    borderRadius: 30, // rounded corners
+    paddingVertical: 15, // vertical padding
+    paddingHorizontal: 20, // horizontal padding
+    fontSize: 16, // text size
+    color: "#09101D", // text color, assuming a dark grey
+    marginBottom: 15, // margin bottom
   },
-  inputLabel: {
-    textAlign: "left",
-    width: "80%",
-    marginBottom: 10,
+  inputTitle: {
+    color: "#2972FE",
+    paddingBottom: 10,
     fontSize: 16,
+    left: 13,
+  },
+  button: {
+    backgroundColor: "#2972FE", // blue background
+    borderRadius: 25, // rounded corners
+    paddingVertical: 18, // vertical padding
+    paddingHorizontal: 20, // horizontal padding
+    alignItems: "center",
+    justifyContent: "center",
+    height: 55, // fixed height for the button
+    marginVertical: 25, // margin top and bottom
+  },
+  buttonText: {
+    color: "#FFF",
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  profileUpload: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    padding: 16,
+    borderRadius: 100, // circular border if the image is a circle
+    backgroundColor: "#ECF0F1", // light grey background
+    overflow: "hidden", // ensures the image does not bleed outside the border radius
+  },
+  profileUploadIcon: {
+    width: 80, // match your icon size
+    height: 80, // match your icon size
+  },
+  profileUploadText: {
+    color: "#A5ABB3",
+    textAlign: "center",
+    marginTop: 8,
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  // Add a back button style if you don't have an icon and want just text
+  backText: {
+    fontSize: 18,
+    color: "#2972FE", // Assuming blue color to match the button
+    padding: 20, // For touchable area
+  },
+  header: {
+    marginTop: 20, // adjust as needed for your layout
+    alignItems: "center",
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#09101D", // dark text for the title
+    marginBottom: 10, // space between title and subtitle
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: "#858C94", // lighter grey for subtitle
+    marginBottom: 30, // space between subtitle and the rest
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#FFF",
+    paddingTop: 20,
   },
 });
+
+export default CreateAccountScreen;

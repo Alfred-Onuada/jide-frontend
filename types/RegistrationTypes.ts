@@ -1,6 +1,10 @@
 export interface UserFormData {
-  username: string;
-  password: string;
+  username?: string;
+  fullName?: string;
+  matricNo?: string;
+  password?: string;
+  hospitalCardNo?: string;
+  confirmPassword?: string;
   email?: string;
   role?: string;
   name: string;
@@ -8,12 +12,13 @@ export interface UserFormData {
   createdAt?: Date;
   updatedAt?: Date;
   _v?: string;
-  dateOfBirth: Date | null;
+  dateOfBirth?: Date | null;
 }
 
 export type UserRegistrationResponse = {
+  status: boolean;
   message: string;
-  data: UserFormData;
+  data?: UserFormData;
 };
 
 export interface DoctorFormData {
@@ -27,12 +32,12 @@ export interface DoctorFormData {
 }
 
 export type LoginRequest = {
-  email: string;
+  username: string;
   password: string;
 };
 
 export type LoginResponse = {
-  status?: boolean;
+  status: boolean;
   message?: string;
   data?: UserFormData | DoctorFormData;
 };

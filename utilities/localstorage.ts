@@ -1,18 +1,26 @@
-export function saveToLocalStorage<T>(key: string, value: T): void {
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+export async function saveToLocalStorage<T>(
+  key: string,
+  value: T
+): Promise<void> {
   try {
-    const serializedValue = JSON.stringify(value);
-    localStorage.setItem(key, serializedValue);
-  } catch (error) {
-    console.error("Error saving to local storage", error);
+    await AsyncStorage.setItem(key, JSON.stringify(value));
+    console.log("Data successfully saved");
+  } catch (e) {
+    console.log("Failed to save the data to the storage");
   }
 }
 
-export function getFromLocalStorage<T>(key: string): T | null {
+export async function getFromLocalStorage<T>(key: string): Promise<T | null> {
   try {
-    const serializedValue = localStorage.getItem(key);
-    return serializedValue ? (JSON.parse(serializedValue) as T) : null;
-  } catch (error) {
-    console.error("Error reading from local storage", error);
+    const value = (await AsyncStorage.getItem(key)) as T;
+    if (value !== null) {
+      console.log("Data retrieved successfully", value);
+    }
+    return value;
+  } catch (e) {
+    console.log("Failed to fetch the data from storage");
     return null;
   }
 }

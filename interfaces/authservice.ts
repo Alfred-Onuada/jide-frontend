@@ -4,6 +4,7 @@ import {
   DoctorFormData,
   LoginRequest,
   LoginResponse,
+  UserRegistrationResponse,
 } from "../types/RegistrationTypes";
 import { saveToLocalStorage } from "../utilities/localstorage";
 import axios, { AxiosResponse } from "axios";
@@ -36,5 +37,29 @@ export async function handleLogin(
         message: "An unexpected error occurred",
       };
     }
+  }
+}
+
+export async function handleRegisterUser(
+  request: UserFormData
+): Promise<UserRegistrationResponse> {
+  try {
+    const response: AxiosResponse = await axios.post(API.LOGIN, request);
+    if (response.status === 200) {
+      saveToLocalStorage("user", response.data.data);
+      return { status: true, message: "Success", data: response.data.data };
+    } else {
+      return {
+        status: false,
+        message: response.data.message,
+        data: response.data.data,
+      };
+    }
+  } catch (error) {
+    return {
+        status: false,
+        message: "An unexpected error occurred",
+        };
+    
   }
 }

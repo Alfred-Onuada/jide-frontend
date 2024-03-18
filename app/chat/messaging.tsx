@@ -134,7 +134,8 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
 }: MessagingScreenProps) => {
   const chatId = route?.params?.chatId;
   console.log(route);
-  const {id: currentUserId} = useLocalSearchParams();
+
+  const { id: currentUserId } = useLocalSearchParams() as { id: string };
 
   console.log(currentUserId);
 
