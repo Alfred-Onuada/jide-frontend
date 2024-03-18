@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
@@ -134,7 +134,9 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
 }: MessagingScreenProps) => {
   const chatId = route?.params?.chatId;
   console.log(route);
-  const currentUserId = "user123";
+  const {id: currentUserId} = useLocalSearchParams();
+
+  console.log(currentUserId);
 
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputText, setInputText] = useState<string>("");

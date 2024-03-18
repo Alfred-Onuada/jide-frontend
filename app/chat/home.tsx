@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
-import { Stack } from "expo-router";
+import { View, Text, Image, StyleSheet, ScrollView, Pressable } from "react-native";
+import { Stack, router } from "expo-router";
 import BottomBar from "../../components/BottomBar";
 
 interface DoctorCardProps {
@@ -39,10 +39,12 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
         source={getDoctorImageUri(id)}
         style={styles.doctorImage}
       />
-      <View style={styles.doctorInfoContainer}>
-        <Text style={styles.doctorName}>{name}</Text>
-        <Text style={styles.doctorSpecialty}>{specialty}</Text>
-      </View>
+      <Pressable onPress={() => router.push({ pathname: '/chat/messaging', params: {id} })}>
+        <View style={styles.doctorInfoContainer}>
+          <Text style={styles.doctorName}>{name}</Text>
+          <Text style={styles.doctorSpecialty}>{specialty}</Text>
+        </View>
+      </Pressable>
     </View>
   );
 };

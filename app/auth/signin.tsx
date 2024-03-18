@@ -17,15 +17,15 @@ export default function Signin() {
   const [password, setPassword] = useState<string>("");
 
   const HandleSignin = async () => {
-    const request: LoginRequest = {
-      email: email,
-      password: password,
-    };
-    const response = await handleLogin(request);
-    if (!response.status) {
-      console.log("invalid Credentials");
-    }
-    router.navigate("chat/chathistory");
+    // const request: LoginRequest = {
+    //   email: email,
+    //   password: password,
+    // };
+    // const response = await handleLogin(request);
+    // if (!response.status) {
+    //   console.log("invalid Credentials");
+    // }
+    router.navigate("/chat/home");
   };
   return (
     <View style={styles.container}>
@@ -60,7 +60,7 @@ export default function Signin() {
         <TextInput
           placeholder="john@google.com"
           style={styles.input}
-          onChangeText={(e) => setEmail(e)}
+          onChangeText={(e) => setEmail(e.toLocaleLowerCase())}
         ></TextInput>
       </View>
 
@@ -74,7 +74,7 @@ export default function Signin() {
         ></TextInput>
       </View>
 
-      <TouchableOpacity style={styles.inBtn} onPress={() => HandleSignin}>
+      <TouchableOpacity style={styles.inBtn} onPress={() => HandleSignin()}>
         <Text style={styles.inText}>Sign In</Text>
       </TouchableOpacity>
 
