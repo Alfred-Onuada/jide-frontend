@@ -48,6 +48,7 @@ export async function handleRegisterUser(
       API.REGISTER_USER,
       request
     );
+    // console.log(response);
     if (response.status === 200 || response.status === 201) {
       saveToLocalStorage("user", response.data.data);
       return { status: true, message: "Success", data: response.data.data };
@@ -58,7 +59,8 @@ export async function handleRegisterUser(
         data: response.data.data,
       };
     }
-  } catch (error) {
+  } catch (error: any) {
+    console.log("message" + error.response.data.errors);
     return {
       status: false,
       message: "An unexpected error occurred",

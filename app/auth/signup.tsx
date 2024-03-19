@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { UserFormData } from "../../types/RegistrationTypes";
 import { handleRegisterUser } from "../../interfaces/authservice";
+import { showToast } from "../../services/toast.service";
 
 const CreateAccountScreen = () => {
   const [userData, setUserData] = useState<UserFormData>({
@@ -30,11 +31,13 @@ const CreateAccountScreen = () => {
     setIsLoading(true);
     var response = await handleRegisterUser(userData);
     if (!response.status) {
+      showToast(response.message);
       console.log(response);
       setIsLoading(false);
       return;
     }
     setIsLoading(false);
+    showToast(response.message);
     router.navigate("/auth/signin");
   };
 
@@ -51,7 +54,7 @@ const CreateAccountScreen = () => {
     console.log(result);
 
     if (!result.canceled) {
-      setUserData({ ...userData, photo: (result as any).base64 });
+      // setUserData({ ...userData, photo: (result as any).base64 });
     }
   };
 
@@ -84,6 +87,13 @@ const CreateAccountScreen = () => {
           onChangeText={(value) =>
             setUserData({ ...userData, fullName: value })
           }
+          style={styles.input}
+        />
+        <Text style={styles.inputTitle}>School Email</Text>
+        <TextInput
+          placeholder="School Email"
+          value={userData.email}
+          onChangeText={(value) => setUserData({ ...userData, email: value })}
           style={styles.input}
         />
         <Text style={styles.inputTitle}>Matric No</Text>

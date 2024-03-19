@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { LoginRequest } from "../../types/RegistrationTypes";
 import { handleLogin } from "../../interfaces/authservice";
+import { showToast } from "../../services/toast.service";
 
 export default function Signin() {
   const [email, setEmail] = useState<string>("");
@@ -26,11 +27,13 @@ export default function Signin() {
     };
     const response = await handleLogin(request);
     if (!response.status) {
-      console.log("invalid Credentials");
+      showToast(response.message as string);
+      console.log(response);
       setIsLoading(false);
       return;
     }
     setIsLoading(false);
+    showToast(response.message as string);
     router.navigate("/chat/home");
   };
   return (

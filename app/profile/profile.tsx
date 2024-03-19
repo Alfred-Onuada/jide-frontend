@@ -16,6 +16,7 @@ import {
   getFromLocalStorage,
   saveToLocalStorage,
 } from "../../utilities/localstorage";
+import { showToast } from "../../services/toast.service";
 
 var user = getFromLocalStorage("user") as UserFormData;
 export default function Profile() {
@@ -34,6 +35,7 @@ export default function Profile() {
     setIsLoading(true);
     var response = await UpdateProfile(userData);
     if (!response.status) {
+      showToast(response.message as string);
       console.log(response);
       setIsLoading(false);
       return;
@@ -41,6 +43,7 @@ export default function Profile() {
     //toast success
     setIsLoading(false);
     console.log("successfull");
+    showToast(response.message as string);
   };
   return (
     <View style={styles.container}>
