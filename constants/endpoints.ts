@@ -9,4 +9,5 @@ export const API = {
   LOGIN: API_URL + "/login",
   ROOMS: API_URL + "/rooms",
   SEARCH: API_URL + "/search",
+  UPDATE_PROFILE: API_URL + "/profile",
 };

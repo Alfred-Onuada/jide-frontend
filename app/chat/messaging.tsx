@@ -39,7 +39,7 @@ type MessagingScreenProps = {
 };
 
 // Mock messages data
-const initialMessages: Message[] = [
+var initialMessages: Message[] = [
   {
     id: "1",
     chatId: "1",

@@ -17,14 +17,14 @@ export default function Signin() {
   const [password, setPassword] = useState<string>("");
 
   const HandleSignin = async () => {
-    // const request: LoginRequest = {
-    //   email: email,
-    //   password: password,
-    // };
-    // const response = await handleLogin(request);
-    // if (!response.status) {
-    //   console.log("invalid Credentials");
-    // }
+    const request: LoginRequest = {
+      email: email,
+      password: password,
+    };
+    const response = await handleLogin(request);
+    if (!response.status) {
+      console.log("invalid Credentials");
+    }
     router.navigate("/chat/home");
   };
   return (

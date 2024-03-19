@@ -21,6 +21,7 @@ const CreateAccountScreen = () => {
     password: "",
     confirmPassword: "",
     email: "",
+    photo: "",
   } as UserFormData);
   const [cameraImage, setCameraImage] = useState<string>();
 
@@ -40,12 +41,13 @@ const CreateAccountScreen = () => {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: true,
     });
 
     console.log(result);
 
     if (!result.canceled) {
-      setCameraImage(result.assets[0].uri);
+      setUserData({ ...userData, photo: (result as any).base64 });
     }
   };
 
@@ -59,7 +61,10 @@ const CreateAccountScreen = () => {
         </Text>
       </View>
 
-      <TouchableOpacity style={styles.profileUpload}>
+      <TouchableOpacity
+        style={styles.profileUpload}
+        onPress={() => pickImage()}
+      >
         <Image
           style={styles.profileUploadIcon}
           source={require("./../../assets/upload.png")} // replace with your local asset path or uri

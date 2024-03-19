@@ -7,12 +7,15 @@ export interface UserFormData {
   confirmPassword?: string;
   email?: string;
   role?: string;
-  name: string;
+  name?: string;
+  gender?: string;
   _id?: string;
+  photo?: string;
   createdAt?: Date;
   updatedAt?: Date;
   _v?: string;
   dateOfBirth?: Date | null;
+  address?: string;
 }
 
 export type UserRegistrationResponse = {
@@ -32,7 +35,7 @@ export interface DoctorFormData {
 }
 
 export type LoginRequest = {
-  username: string;
+  email: string;
   password: string;
 };
 
