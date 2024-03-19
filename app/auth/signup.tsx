@@ -1,5 +1,6 @@
 import { Stack, router } from "expo-router";
 import React, { useState } from "react";
+import * as ImagePicker from "expo-image-picker";
 import {
   View,
   Text,
@@ -21,6 +22,7 @@ const CreateAccountScreen = () => {
     confirmPassword: "",
     email: "",
   } as UserFormData);
+  const [cameraImage, setCameraImage] = useState<string>();
 
   const handleCreateAccount = async () => {
     var response = await handleRegisterUser(userData);
@@ -29,6 +31,22 @@ const CreateAccountScreen = () => {
       return;
     }
     router.navigate("/auth/signin");
+  };
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setCameraImage(result.assets[0].uri);
+    }
   };
 
   return (
