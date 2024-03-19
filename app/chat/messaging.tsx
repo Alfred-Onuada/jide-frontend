@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { UserFormData } from "../../types/RegistrationTypes";
 
 // Define the type for each message
 type Message = {
@@ -52,7 +53,7 @@ var initialMessages: Message[] = [
   {
     id: "2",
     chatId: "1",
-    sender: "user123",
+    sender: "65fa04dfceafb78a75e12724",
     text: "Hi! I'm having an issue with my account.",
     dateTime: new Date("2024-01-01T12:01:00Z"),
     profilepicture: "https://via.placeholder.com/50",
@@ -69,7 +70,7 @@ var initialMessages: Message[] = [
   {
     id: "4",
     chatId: "1",
-    sender: "user123",
+    sender: "65fa04dfceafb78a75e12724",
     text: "I've been charged incorrectly for my last transaction.",
     dateTime: new Date("2024-01-01T12:03:00Z"),
     profilepicture: "https://via.placeholder.com/50",
@@ -86,13 +87,13 @@ var initialMessages: Message[] = [
   {
     id: "6",
     chatId: "1",
-    sender: "user123",
+    sender: "65fa04dfceafb78a75e12724",
     text: "Sure, it's #123456789.",
     dateTime: new Date("2024-01-01T12:05:00Z"),
     profilepicture: "https://via.placeholder.com/50",
   },
 ];
-initialMessages.sort((a, b) => b.dateTime.getTime() - a.dateTime.getTime());
+initialMessages.sort((a, b) => a.dateTime.getTime() - b.dateTime.getTime());
 // MessageItem component
 const Header = () => (
   <View style={styles.header}>
@@ -135,9 +136,13 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
   const chatId = route?.params?.chatId;
   console.log(route);
 
-  const { id: currentUserId } = useLocalSearchParams() as { id: string };
+  const { id: currentUserId, UserID: user } = useLocalSearchParams() as {
+    id: string;
+    UserID: string;
+  };
 
   console.log(currentUserId);
+  console.log("bbb" + user);
 
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputText, setInputText] = useState<string>("");
@@ -146,16 +151,18 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
     const newMessage: Message = {
       id: Math.random().toString(36).substring(7),
       chatId: chatId,
-      sender: currentUserId,
+      sender: "65fa04dfceafb78a75e12724",
       text: inputText,
       dateTime: new Date(),
       profilepicture: "https://via.placeholder.com/50", // Replace with actual profile picture
     };
-    setMessages([...messages, newMessage]);
+    setMessages((messages) => [...messages, newMessage]);
     setInputText("");
   };
 
-  const isSender = (message: Message) => message.sender === currentUserId;
+  const isSender = (message: Message) =>
+    message.sender === "65fa04dfceafb78a75e12724";
+  console.log(currentUserId);
 
   return (
     <SafeAreaView style={styles.container}>

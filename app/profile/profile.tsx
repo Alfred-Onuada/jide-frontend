@@ -16,7 +16,7 @@ import {
   getFromLocalStorage,
   saveToLocalStorage,
 } from "../../utilities/localstorage";
-import { showToast } from "../../services/toast.service";
+import { showToast } from "../../services/toast";
 
 var user = getFromLocalStorage("user") as UserFormData;
 export default function Profile() {

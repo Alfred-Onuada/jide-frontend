@@ -12,7 +12,8 @@ import {
 } from "react-native";
 import { LoginRequest } from "../../types/RegistrationTypes";
 import { handleLogin } from "../../interfaces/authservice";
-import { showToast } from "../../services/toast.service";
+import { showToast } from "../../services/toast";
+import Toast from "react-native-root-toast";
 
 export default function Signin() {
   const [email, setEmail] = useState<string>("");
@@ -27,7 +28,14 @@ export default function Signin() {
     };
     const response = await handleLogin(request);
     if (!response.status) {
-      showToast(response.message as string);
+      Toast.show(response.message as string, {
+        duration: Toast.durations.SHORT,
+        position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0,
+      });
       console.log(response);
       setIsLoading(false);
       return;

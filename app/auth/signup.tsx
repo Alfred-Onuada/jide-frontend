@@ -13,7 +13,8 @@ import {
 } from "react-native";
 import { UserFormData } from "../../types/RegistrationTypes";
 import { handleRegisterUser } from "../../interfaces/authservice";
-import { showToast } from "../../services/toast.service";
+import { showToast } from "../../services/toast";
+import { saveToLocalStorage } from "../../utilities/localstorage";
 
 const CreateAccountScreen = () => {
   const [userData, setUserData] = useState<UserFormData>({
@@ -37,8 +38,9 @@ const CreateAccountScreen = () => {
       return;
     }
     setIsLoading(false);
+    saveToLocalStorage("user", response.data);
     showToast(response.message);
-    router.navigate("/auth/signin");
+    router.navigate("/chat/home");
   };
 
   const pickImage = async () => {

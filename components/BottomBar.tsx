@@ -7,12 +7,16 @@ const BottomBar = () => {
   // Define your icon action handlers
   const handlePressHome = () => {
     console.log("Home pressed");
-    router.navigate("chat/chathistory");
+    router.navigate("chat/home");
   };
 
   const handlePressProfile = () => {
     console.log("Profile pressed");
     router.navigate("profile/profile");
+  };
+  const handlePressHistory = () => {
+    console.log("History pressed");
+    router.navigate("chat/chathistory");
   };
 
   // ... handle other icon presses similarly
@@ -27,7 +31,7 @@ const BottomBar = () => {
         <FontAwesome name="user" size={24} color="#333" />
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={handlePressProfile}>
+      <TouchableOpacity onPress={handlePressHistory}>
         <FontAwesome name="history" size={24} color="#333" />
       </TouchableOpacity>
 

@@ -14,11 +14,12 @@ export async function saveToLocalStorage<T>(
 
 export async function getFromLocalStorage<T>(key: string): Promise<T | null> {
   try {
-    const value = (await AsyncStorage.getItem(key)) as T;
+    const value = await AsyncStorage.getItem(key);
     if (value !== null) {
       console.log("Data retrieved successfully", value);
+      return JSON.parse(value);
     }
-    return value;
+    return null;
   } catch (e) {
     console.log("Failed to fetch the data from storage");
     return null;

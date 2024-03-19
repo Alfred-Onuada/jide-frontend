@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { Stack, router } from "expo-router";
 import BottomBar from "../../components/BottomBar";
+import { getFromLocalStorage } from "../../utilities/localstorage";
+import { UserFormData } from "../../types/RegistrationTypes";
 
 interface DoctorCardProps {
   id: number;
@@ -40,6 +42,9 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
   }
   console.log(imageUri);
   const isLive = false;
+  const user = getFromLocalStorage<UserFormData>("user");
+  console.log("kkkjs" + user);
+
   return (
     <View style={styles.doctorCardContainer}>
       <Image
@@ -49,7 +54,10 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
       />
       <Pressable
         onPress={() =>
-          router.push({ pathname: "/chat/messaging", params: { id } })
+          router.push({
+            pathname: "/chat/messaging",
+            params: { id },
+          })
         }
       >
         <View style={styles.doctorInfoContainer}>
