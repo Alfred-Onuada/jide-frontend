@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { LoginRequest } from "../../types/RegistrationTypes";
 import { handleLogin } from "../../interfaces/authservice";
@@ -15,8 +16,10 @@ import { handleLogin } from "../../interfaces/authservice";
 export default function Signin() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const HandleSignin = async () => {
+    setIsLoading(true);
     const request: LoginRequest = {
       email: email,
       password: password,
@@ -24,7 +27,10 @@ export default function Signin() {
     const response = await handleLogin(request);
     if (!response.status) {
       console.log("invalid Credentials");
+      setIsLoading(false);
+      return;
     }
+    setIsLoading(false);
     router.navigate("/chat/home");
   };
   return (
@@ -74,8 +80,16 @@ export default function Signin() {
         ></TextInput>
       </View>
 
-      <TouchableOpacity style={styles.inBtn} onPress={() => HandleSignin()}>
-        <Text style={styles.inText}>Sign In</Text>
+      <TouchableOpacity
+        style={styles.inBtn}
+        onPress={() => HandleSignin()}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <ActivityIndicator size="large" style={styles.inText} color="#FFF" />
+        ) : (
+          <Text style={styles.inText}>Sign In</Text>
+        )}
       </TouchableOpacity>
 
       <Text style={{ fontSize: 16, marginTop: 10 }}>

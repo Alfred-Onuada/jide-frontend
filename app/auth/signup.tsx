@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { UserFormData } from "../../types/RegistrationTypes";
 import { handleRegisterUser } from "../../interfaces/authservice";
@@ -23,14 +24,17 @@ const CreateAccountScreen = () => {
     email: "",
     photo: "",
   } as UserFormData);
-  const [cameraImage, setCameraImage] = useState<string>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleCreateAccount = async () => {
+    setIsLoading(true);
     var response = await handleRegisterUser(userData);
     if (!response.status) {
       console.log(response);
+      setIsLoading(false);
       return;
     }
+    setIsLoading(false);
     router.navigate("/auth/signin");
   };
 
@@ -126,8 +130,16 @@ const CreateAccountScreen = () => {
         />
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
-        <Text style={styles.buttonText}>Create Student Account</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleCreateAccount}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <ActivityIndicator size="large" style={styles.inText} color="#FFF" />
+        ) : (
+          <Text style={styles.buttonText}>Create Student Account</Text>
+        )}
       </TouchableOpacity>
     </ScrollView>
   );
@@ -137,6 +149,13 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 20,
     paddingHorizontal: 5,
+  },
+  inText: {
+    textAlign: "center",
+    paddingVertical: 15,
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "800",
   },
   input: {
     backgroundColor: "#FFF", // assuming a white background

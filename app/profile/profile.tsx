@@ -7,30 +7,39 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { UserFormData } from "../../types/RegistrationTypes";
 import { useEffect, useState } from "react";
 import { FetchProfile, UpdateProfile } from "../../interfaces/userservice";
-import { getFromLocalStorage } from "../../utilities/localstorage";
+import {
+  getFromLocalStorage,
+  saveToLocalStorage,
+} from "../../utilities/localstorage";
 
 var user = getFromLocalStorage("user") as UserFormData;
 export default function Profile() {
   const [userData, setUserData] = useState<UserFormData>(user as UserFormData);
+  const [isloading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
       var dat = await FetchProfile(user._id as string);
       setUserData(dat.data as UserFormData);
+      saveToLocalStorage("user", dat.data);
     })();
   });
 
   const HandleUpdateProfile = async () => {
+    setIsLoading(true);
     var response = await UpdateProfile(userData);
     if (!response.status) {
       console.log(response);
+      setIsLoading(false);
       return;
     }
     //toast success
+    setIsLoading(false);
     console.log("successfull");
   };
   return (
@@ -164,8 +173,13 @@ export default function Profile() {
       <TouchableOpacity
         style={styles.inBtn}
         onPress={() => HandleUpdateProfile()}
+        disabled={isloading}
       >
-        <Text style={styles.inText}>Confirm</Text>
+        {isloading ? (
+          <ActivityIndicator size="large" style={styles.inText} color="#FFF" />
+        ) : (
+          <Text style={styles.inText}>Confirm</Text>
+        )}
       </TouchableOpacity>
       <StatusBar style="auto" />
     </View>
