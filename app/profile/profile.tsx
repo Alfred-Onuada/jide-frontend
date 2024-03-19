@@ -9,20 +9,20 @@ import {
   TextInput,
 } from "react-native";
 import { UserFormData } from "../../types/RegistrationTypes";
-import { useState } from "react";
-import { UpdateProfile } from "../../interfaces/userservice";
+import { useEffect, useState } from "react";
+import { FetchProfile, UpdateProfile } from "../../interfaces/userservice";
+import { getFromLocalStorage } from "../../utilities/localstorage";
 
+var user = getFromLocalStorage("user") as UserFormData;
 export default function Profile() {
-  const [userData, setUserData] = useState<UserFormData>({
-    fullName: "",
-    matricNo: "",
-    hospitalCardNo: "",
-    password: "",
-    confirmPassword: "",
-    email: "",
-    photo: "",
-    gender: "",
-  } as UserFormData);
+  const [userData, setUserData] = useState<UserFormData>(user as UserFormData);
+
+  useEffect(() => {
+    (async () => {
+      var dat = await FetchProfile(user._id as string);
+      setUserData(dat.data as UserFormData);
+    })();
+  });
 
   const HandleUpdateProfile = async () => {
     var response = await UpdateProfile(userData);

@@ -10,4 +10,5 @@ export const API = {
   ROOMS: API_URL + "/rooms",
   SEARCH: API_URL + "/search",
   UPDATE_PROFILE: API_URL + "/profile",
+  CHAT_AI: API_URL + "/ai/message",
 };

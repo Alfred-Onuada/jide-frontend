@@ -1,5 +1,13 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, ScrollView, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import { Stack, router } from "expo-router";
 import BottomBar from "../../components/BottomBar";
 
@@ -39,7 +47,11 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
         source={getDoctorImageUri(id)}
         style={styles.doctorImage}
       />
-      <Pressable onPress={() => router.push({ pathname: '/chat/messaging', params: {id} })}>
+      <Pressable
+        onPress={() =>
+          router.push({ pathname: "/chat/messaging", params: { id } })
+        }
+      >
         <View style={styles.doctorInfoContainer}>
           <Text style={styles.doctorName}>{name}</Text>
           <Text style={styles.doctorSpecialty}>{specialty}</Text>
@@ -103,9 +115,11 @@ const App: React.FC<AppProps> = () => {
       <ScrollView style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
         <View style={styles.headerContainer}></View>
-        <View style={styles.chatContainer}>
-          <Text style={styles.chatText}>Chat with Our SmartAi</Text>
-        </View>
+        <TouchableOpacity onPress={() => router.navigate("chat/ai")}>
+          <View style={styles.chatContainer}>
+            <Text style={styles.chatText}>Chat with Our SmartAi</Text>
+          </View>
+        </TouchableOpacity>
         <Text style={styles.availableDoctorsText}>Available Doctors</Text>
         <View style={styles.doctorsListContainer}>
           {doctorsData.map((doctor, index) => (
