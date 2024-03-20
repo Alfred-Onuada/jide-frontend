@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from "react-native";
 import { UserFormData } from "../../types/RegistrationTypes";
 
@@ -108,7 +109,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, isSender }) => {
   return (
     <View
       style={[
-        styles.messageRow,
+        styles.messageContainer,
         isSender ? styles.senderRow : styles.receiverRow,
       ]}
     >
@@ -133,18 +134,18 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, isSender }) => {
 const MessagingScreen: React.FC<MessagingScreenProps> = ({
   route,
 }: MessagingScreenProps) => {
-  const chatId = route?.params?.chatId;
   console.log(route);
 
-  const { id: currentUserId, UserID: user } = useLocalSearchParams() as {
+  const { id: chatId, user: user } = useLocalSearchParams() as any as {
     id: string;
-    UserID: string;
+    user: UserFormData;
   };
-
-  console.log(currentUserId);
+  console.log(chatId);
   console.log("bbb" + user);
 
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<Message[]>(
+    initialMessages.filter((message) => message.chatId === chatId)
+  );
   const [inputText, setInputText] = useState<string>("");
 
   const handleSendMessage = () => {
@@ -160,9 +161,9 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
     setInputText("");
   };
 
-  const isSender = (message: Message) =>
-    message.sender === "65fa04dfceafb78a75e12724";
-  console.log(currentUserId);
+  const isSender = (message: Message) => message.sender === user._id;
+  console.log("aaa" + user._id);
+  console.log(chatId);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -179,7 +180,6 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
         renderItem={({ item }) => (
           <MessageItem message={item} isSender={isSender(item)} />
         )}
-        inverted
       />
       <View style={styles.inputContainer}>
         <TextInput
@@ -206,7 +206,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
+  messageContainer: {
+    paddingTop: 10,
+    margin: 10,
+    borderRadius: 20,
+    bottom: 0,
+    flexDirection: "row",
+    alignItems: "flex-end",
+  },
   messageRow: {
     flexDirection: "row",
     padding: 10,

@@ -42,7 +42,10 @@ export default function Signin() {
     }
     setIsLoading(false);
     showToast(response.message as string);
-    router.navigate("/chat/home");
+    router.push({
+      pathname: "/chat/home",
+      params: { user: response.data?._id as string },
+    });
   };
   return (
     <View style={styles.container}>

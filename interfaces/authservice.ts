@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API } from "../constants/endpoints";
 import {
   UserFormData,
@@ -15,7 +16,8 @@ export async function handleLogin(
   try {
     const response: AxiosResponse = await axios.post(API.LOGIN, request);
     if (response.status === 200) {
-      saveToLocalStorage("user", response.data.data);
+      AsyncStorage.setItem("user_id", response.data.data._id);
+      console.log("uuid" + AsyncStorage.getItem("user_id"));
       return { status: true, message: "Success", data: response.data.data };
     } else {
       return {
@@ -49,8 +51,9 @@ export async function handleRegisterUser(
       request
     );
     // console.log(response);
+    AsyncStorage.setItem("user_id", response.data.data._id);
+    console.log("uuid" + AsyncStorage.getItem("user_id"));
     if (response.status === 200 || response.status === 201) {
-      saveToLocalStorage("user", response.data.data);
       return { status: true, message: "Success", data: response.data.data };
     } else {
       return {

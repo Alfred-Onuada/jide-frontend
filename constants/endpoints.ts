@@ -11,4 +11,5 @@ export const API = {
   SEARCH: API_URL + "/search",
   UPDATE_PROFILE: API_URL + "/profile",
   CHAT_AI: API_URL + "/ai/message",
+  GET_DOCTORS: API_URL + "/doctors",
 };

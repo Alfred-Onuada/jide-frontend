@@ -9,7 +9,7 @@ import {
   TextInput,
   ActivityIndicator,
 } from "react-native";
-import { UserFormData } from "../../types/RegistrationTypes";
+import { LoginResponse, UserFormData } from "../../types/RegistrationTypes";
 import { useEffect, useState } from "react";
 import { FetchProfile, UpdateProfile } from "../../interfaces/userservice";
 import {
@@ -17,19 +17,32 @@ import {
   saveToLocalStorage,
 } from "../../utilities/localstorage";
 import { showToast } from "../../services/toast";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-var user = getFromLocalStorage("user") as UserFormData;
 export default function Profile() {
-  const [userData, setUserData] = useState<UserFormData>(user as UserFormData);
-  const [isloading, setIsLoading] = useState<boolean>(false);
-
+  const FetchUserProfile = async (id: string) => {
+    var dat = (await FetchProfile(id)) as LoginResponse;
+    setUserData({
+      _id: dat.data?._id,
+      email: dat.data?.email,
+      fullName: dat.data?.fullName,
+      dateOfBirth: dat.data?.dateOfBirth,
+      gender: dat.data?.gender,
+      address: dat.data?.address,
+    });
+    console.log("dattt" + dat);
+  };
+  var user = "";
   useEffect(() => {
     (async () => {
-      var dat = await FetchProfile(user._id as string);
-      setUserData(dat.data as UserFormData);
-      saveToLocalStorage("user", dat.data);
+      user = (await AsyncStorage.getItem("user_id")) as string;
+      console.log("lll" + user);
+      await FetchUserProfile(user);
     })();
-  });
+  }, []);
+
+  const [userData, setUserData] = useState<UserFormData>({});
+  const [isloading, setIsLoading] = useState<boolean>(false);
 
   const HandleUpdateProfile = async () => {
     setIsLoading(true);
@@ -106,7 +119,7 @@ export default function Profile() {
         <Text style={styles.inputLabel}>Email*</Text>
         <View style={styles.shadow}>
           <TextInput
-            placeholder="olajide@google.com"
+            placeholder={userData.email}
             style={styles.input}
             onChangeText={(value) => setUserData({ ...userData, email: value })}
           ></TextInput>

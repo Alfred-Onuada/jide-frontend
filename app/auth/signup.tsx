@@ -33,7 +33,7 @@ const CreateAccountScreen = () => {
     var response = await handleRegisterUser(userData);
     if (!response.status) {
       showToast(response.message);
-      console.log(response);
+      console.log(response.data?._id);
       setIsLoading(false);
       return;
     }

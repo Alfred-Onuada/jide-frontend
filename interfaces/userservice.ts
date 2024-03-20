@@ -7,7 +7,7 @@ export async function UpdateProfile(
 ): Promise<LoginResponse> {
   try {
     const response = await axios.patch(
-      API.UPDATE_PROFILE + `${request._id}`,
+      API.UPDATE_PROFILE + `/${request._id}`,
       request
     );
     if (response.status === 400) {
@@ -32,11 +32,16 @@ export async function UpdateProfile(
 
 export async function FetchProfile(id: string): Promise<LoginResponse> {
   try {
-    const response = await axios.get(API.UPDATE_PROFILE + `${id}`);
+    const response = await axios.get(API.UPDATE_PROFILE + `/${id}`);
+    console.log("resp" + response.data);
     if (response.status === 400) {
       return { status: false, message: response.data.message };
     }
-    return { status: true, message: "Success", data: response.data.data };
+    return {
+      status: true,
+      message: "Success",
+      data: JSON.parse(response.data.data),
+    };
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       return {

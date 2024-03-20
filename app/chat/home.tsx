@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import { Stack, router } from "expo-router";
+import { Stack, router, useLocalSearchParams } from "expo-router";
 import BottomBar from "../../components/BottomBar";
 import { getFromLocalStorage } from "../../utilities/localstorage";
 import { UserFormData } from "../../types/RegistrationTypes";
@@ -18,12 +18,14 @@ interface DoctorCardProps {
   name: string;
   specialty: string;
   imageUri: string;
+  user: UserFormData;
 }
 const DoctorCard: React.FC<DoctorCardProps> = ({
   id,
   name,
   specialty,
   imageUri,
+  user,
 }) => {
   function getDoctorImageUri(id: number) {
     switch (id) {
@@ -42,7 +44,12 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
   }
   console.log(imageUri);
   const isLive = false;
-  const user = getFromLocalStorage<UserFormData>("user");
+  //   var user: UserFormData = {};
+  //   useEffect(() => {
+  //     (async () => {
+  //       user = (await getFromLocalStorage<UserFormData>("user")) as UserFormData;
+  //     })();
+  //   });
   console.log("kkkjs" + user);
 
   return (
@@ -56,7 +63,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
         onPress={() =>
           router.push({
             pathname: "/chat/messaging",
-            params: { id },
+            params: { id, user },
           })
         }
       >
@@ -71,7 +78,11 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
 
 interface AppProps {}
 
-const App: React.FC<AppProps> = () => {
+const App: React.FC<AppProps> = ({ route }: any) => {
+  const { user: user } = useLocalSearchParams() as any as {
+    user: UserFormData;
+  };
+  console.log("user is" + user);
   const doctorsData = [
     {
       id: 1,
@@ -137,6 +148,7 @@ const App: React.FC<AppProps> = () => {
               name={doctor.name}
               specialty={doctor.specialty}
               imageUri={doctor.imageUri}
+              user={user}
             />
           ))}
         </View>

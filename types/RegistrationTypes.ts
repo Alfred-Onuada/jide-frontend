@@ -42,5 +42,5 @@ export type LoginRequest = {
 export type LoginResponse = {
   status: boolean;
   message?: string;
-  data?: UserFormData | DoctorFormData;
+  data?: UserFormData;
 };
