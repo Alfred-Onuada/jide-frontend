@@ -56,7 +56,7 @@ const CreateAccountScreen = () => {
     console.log(result);
 
     if (!result.canceled) {
-      // setUserData({ ...userData, photo: (result as any).base64 });
+      setUserData({ ...userData, avatar: (result as any).base64 });
     }
   };
 

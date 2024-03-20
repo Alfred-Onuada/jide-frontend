@@ -1,5 +1,10 @@
-import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
-import React, { useState } from "react";
+import {
+  Stack,
+  router,
+  useLocalSearchParams,
+  useNavigation,
+} from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -14,6 +19,7 @@ import {
   ScrollView,
 } from "react-native";
 import { UserFormData } from "../../types/RegistrationTypes";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Define the type for each message
 type Message = {
@@ -134,14 +140,29 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, isSender }) => {
 const MessagingScreen: React.FC<MessagingScreenProps> = ({
   route,
 }: MessagingScreenProps) => {
-  console.log(route);
-
-  const { id: chatId, user: user } = useLocalSearchParams() as any as {
+  const { id: chatId, userID: users } = useLocalSearchParams() as any as {
     id: string;
-    user: UserFormData;
+    userID: UserFormData;
   };
-  console.log(chatId);
-  console.log("bbb" + user);
+  const [user, setUser] = useState<UserFormData>({});
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await AsyncStorage.getItem("user");
+        if (res !== null) {
+          const userData = JSON.parse(res) as UserFormData;
+          setUser(userData);
+        } else {
+          router.navigate("/auth/signin");
+        }
+      } catch (error) {
+        // Handle errors, e.g., parsing errors or AsyncStorage errors
+        console.error(error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const [messages, setMessages] = useState<Message[]>(
     initialMessages.filter((message) => message.chatId === chatId)
@@ -162,9 +183,6 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
   };
 
   const isSender = (message: Message) => message.sender === user._id;
-  console.log("aaa" + user._id);
-  console.log(chatId);
-
   return (
     <SafeAreaView style={styles.container}>
       <Header />

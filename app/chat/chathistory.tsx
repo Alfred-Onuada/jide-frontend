@@ -44,8 +44,8 @@ export default function App() {
       <TouchableOpacity
         onPress={() =>
           router.push({
-            pathname: `chat/messaging?chatID=${item.id}`,
-            params: localparam,
+            pathname: "chat/messaging",
+            params: { id: item.id },
           })
         }
       >

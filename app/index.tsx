@@ -1,11 +1,20 @@
-import { Stack, router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Stack, router, useRootNavigationState } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import { UserFormData } from "../types/RegistrationTypes";
 
 export default function App() {
+  var user: UserFormData = {};
+  const rootNavigationState = useRootNavigationState();
   const [page, setPage] = useState(0);
-  //router.navigate("chat/home");
+  AsyncStorage.getItem("user").then((res) => {
+    user = JSON.parse(res as string) as UserFormData;
+  });
+
+  // router.navigate("/chat/home");
+
   return (
     <View style={styles.container}>
       <Stack.Screen

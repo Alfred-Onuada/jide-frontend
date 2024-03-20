@@ -1,5 +1,10 @@
-import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
-import React, { useState } from "react";
+import {
+  Stack,
+  router,
+  useLocalSearchParams,
+  useNavigation,
+} from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,7 +16,10 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from "react-native";
+import { UserFormData } from "../../types/RegistrationTypes";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MessageAi } from "../../interfaces/userservice";
 
 // Define the type for each message
@@ -45,70 +53,28 @@ var initialMessages: Message[] = [
     id: "1",
     chatId: "1",
     sender: "AI",
-    senderName: "AI Assistant",
-    text: "Hello! How can I help you today?",
-    dateTime: new Date("2024-01-01T12:00:00Z"),
-    profilepicture: "https://via.placeholder.com/50",
-  },
-  {
-    id: "2",
-    chatId: "1",
-    sender: "user123",
-    text: "Hi! I'm having an issue with my account.",
-    dateTime: new Date("2024-01-01T12:01:00Z"),
-    profilepicture: "https://via.placeholder.com/50",
-  },
-  {
-    id: "3",
-    chatId: "1",
-    sender: "AI",
-    senderName: "AI Assistant",
-    text: "I'm sorry to hear that. Could you provide me with more details?",
-    dateTime: new Date("2024-01-01T12:02:00Z"),
-    profilepicture: "https://via.placeholder.com/50",
-  },
-  {
-    id: "4",
-    chatId: "1",
-    sender: "user123",
-    text: "I've been charged incorrectly for my last transaction.",
-    dateTime: new Date("2024-01-01T12:03:00Z"),
-    profilepicture: "https://via.placeholder.com/50",
-  },
-  {
-    id: "5",
-    chatId: "1",
-    sender: "AI",
-    senderName: "AI Assistant",
-    text: "I see. Let me check that for you. Can you provide the transaction ID?",
-    dateTime: new Date("2024-01-01T12:04:00Z"),
-    profilepicture: "https://via.placeholder.com/50",
-  },
-  {
-    id: "6",
-    chatId: "1",
-    sender: "user123",
-    text: "Sure, it's #123456789.",
+    text: "Hi i am your AI Assistant How can i help you?",
     dateTime: new Date("2024-01-01T12:05:00Z"),
     profilepicture: "https://via.placeholder.com/50",
   },
 ];
-initialMessages.sort((a, b) => b.dateTime.getTime() - a.dateTime.getTime());
+initialMessages.sort((a, b) => a.dateTime.getTime() - b.dateTime.getTime());
 // MessageItem component
+
 const Header = () => (
   <View style={styles.header}>
     <Image
       source={{ uri: "https://via.placeholder.com/50" }} // Replace with the actual image source
       style={styles.doctorProfilePic}
     />
-    <Text style={styles.headerTitle}>Messaging</Text>
+    <Text style={styles.headerTitle}>AI Assistant</Text>
   </View>
 );
 const MessageItem: React.FC<MessageItemProps> = ({ message, isSender }) => {
   return (
     <View
       style={[
-        styles.messageRow,
+        styles.messageContainer,
         isSender ? styles.senderRow : styles.receiverRow,
       ]}
     >
@@ -130,35 +96,86 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, isSender }) => {
 };
 
 // MessagingScreen component
-const MessagingScreen: React.FC<MessagingScreenProps> = ({
+const AICHAT: React.FC<MessagingScreenProps> = ({
   route,
 }: MessagingScreenProps) => {
-  const chatId = route?.params?.chatId;
-  console.log(route);
+  var { id: chatId, userID: users } = useLocalSearchParams() as any as {
+    id: string;
+    userID: UserFormData;
+  };
+  chatId = "1";
 
-  const { id: currentUserId } = useLocalSearchParams() as { id: string };
+  const [user, setUser] = useState<UserFormData>({});
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await AsyncStorage.getItem("user");
+        if (res !== null) {
+          const userData = JSON.parse(res) as UserFormData;
+          setUser(userData);
+        } else {
+          router.navigate("/auth/signin");
+        }
+      } catch (error) {
+        // Handle errors, e.g., parsing errors or AsyncStorage errors
+        console.error(error);
+      }
+    };
 
-  console.log(currentUserId);
+    fetchUser();
+  }, []);
 
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<Message[]>(
+    initialMessages.filter((message) => message.chatId === chatId)
+  );
+  useEffect(() => {
+    const LoadMessages = async () => {
+      var messages = await AsyncStorage.getItem("aimessages");
+      if (messages !== null) {
+        setMessages(JSON.parse(messages) as Message[]);
+        console.log("here messages restored");
+      }
+    };
+    LoadMessages();
+  });
+  useEffect(() => {
+    AsyncStorage.setItem("aimessages", JSON.stringify(messages)).then((res) => {
+      console.log("here messages saved");
+    });
+  }, [messages]);
   const [inputText, setInputText] = useState<string>("");
 
   const handleSendMessage = async () => {
-    const response = await MessageAi(inputText);
     const newMessage: Message = {
       id: Math.random().toString(36).substring(7),
       chatId: chatId,
-      sender: currentUserId,
+      sender: user._id as string,
       text: inputText,
       dateTime: new Date(),
       profilepicture: "https://via.placeholder.com/50", // Replace with actual profile picture
     };
-    setMessages([...messages, newMessage]);
+    setMessages((messages) => [...messages, newMessage]);
+
+    var airesponse = await MessageAi({
+      message: inputText,
+      userId: user._id as string,
+    });
+    console.log("here ai");
+    console.log(airesponse);
+
+    const aimessage: Message = {
+      id: Math.random().toString(36).substring(7),
+      chatId: chatId,
+      sender: "AI",
+      text: airesponse.data as string,
+      dateTime: new Date(new Date().getTime() + 60000), // Add 1 minute to the current date and time
+      profilepicture: "https://via.placeholder.com/50", // Replace with actual profile picture
+    };
+    setMessages((messages) => [...messages, aimessage]);
     setInputText("");
   };
 
-  const isSender = (message: Message) => message.sender === currentUserId;
-
+  const isSender = (message: Message) => message.sender === user._id;
   return (
     <SafeAreaView style={styles.container}>
       <Header />
@@ -174,7 +191,6 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
         renderItem={({ item }) => (
           <MessageItem message={item} isSender={isSender(item)} />
         )}
-        inverted
       />
       <View style={styles.inputContainer}>
         <TextInput
@@ -201,7 +217,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
+  messageContainer: {
+    paddingTop: 10,
+    margin: 10,
+    borderRadius: 20,
+    bottom: 0,
+    flexDirection: "row",
+    alignItems: "flex-end",
+  },
   messageRow: {
     flexDirection: "row",
     padding: 10,
@@ -281,4 +304,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MessagingScreen;
+export default AICHAT;

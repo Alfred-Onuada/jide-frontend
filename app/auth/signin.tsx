@@ -10,7 +10,7 @@ import {
   TextInput,
   ActivityIndicator,
 } from "react-native";
-import { LoginRequest } from "../../types/RegistrationTypes";
+import { LoginRequest, UserFormData } from "../../types/RegistrationTypes";
 import { handleLogin } from "../../interfaces/authservice";
 import { showToast } from "../../services/toast";
 import Toast from "react-native-root-toast";
@@ -44,7 +44,7 @@ export default function Signin() {
     showToast(response.message as string);
     router.push({
       pathname: "/chat/home",
-      params: { user: response.data?._id as string },
+      params: { user: response.data as UserFormData },
     });
   };
   return (

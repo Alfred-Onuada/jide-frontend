@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,22 +11,17 @@ import {
 import { Stack, router, useLocalSearchParams } from "expo-router";
 import BottomBar from "../../components/BottomBar";
 import { getFromLocalStorage } from "../../utilities/localstorage";
-import { UserFormData } from "../../types/RegistrationTypes";
+import { DoctorsResponse, UserFormData } from "../../types/RegistrationTypes";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GetDoctors } from "../../interfaces/userservice";
 
-interface DoctorCardProps {
-  id: number;
+export interface DoctorCardProps {
+  _id: string;
   name: string;
-  specialty: string;
-  imageUri: string;
+  avatar: string;
   user: UserFormData;
 }
-const DoctorCard: React.FC<DoctorCardProps> = ({
-  id,
-  name,
-  specialty,
-  imageUri,
-  user,
-}) => {
+const DoctorCard: React.FC<DoctorCardProps> = ({ _id, name, avatar, user }) => {
   function getDoctorImageUri(id: number) {
     switch (id) {
       case 1:
@@ -43,31 +38,24 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
     }
   }
   const isLive = false;
-  //   var user: UserFormData = {};
-  //   useEffect(() => {
-  //     (async () => {
-  //       user = (await getFromLocalStorage<UserFormData>("user")) as UserFormData;
-  //     })();
-  //   });
 
   return (
     <View style={styles.doctorCardContainer}>
       <Image
         resizeMode="cover"
-        source={getDoctorImageUri(id)}
+        source={{ uri: avatar }}
         style={styles.doctorImage}
       />
       <Pressable
         onPress={() =>
           router.push({
             pathname: "/chat/messaging",
-            params: { id, user },
+            params: { id: _id, user },
           })
         }
       >
         <View style={styles.doctorInfoContainer}>
           <Text style={styles.doctorName}>{name}</Text>
-          <Text style={styles.doctorSpecialty}>{specialty}</Text>
         </View>
       </Pressable>
     </View>
@@ -76,37 +64,50 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
 
 interface AppProps {}
 
-const App: React.FC<AppProps> = ({ route }: any) => {
-  const { user: user } = useLocalSearchParams() as any as {
-    user: UserFormData;
-  };
-  const doctorsData = [
-    {
-      id: 1,
-      name: "Dr. Comfort Bell",
-      specialty: "Cardio Specialist",
-      imageUri: "../../assets/doctor1.png",
-    },
-    {
-      id: 2,
-      name: "Dr. Onuada Alfred",
-      specialty: "Dental Specialist",
-      imageUri: "../../assets/doctor2.png",
-    },
-    {
-      id: 3,
-      name: "Dr. Comfort Bell",
-      specialty: "Cardio Specialist",
-      imageUri: "../../assets/doctor3.png",
-    },
-    {
-      id: 4,
-      name: "Dr. Onuada Alfred",
-      specialty: "Dental Specialist",
-      imageUri: "../../assets/doctor4.png",
-    },
-  ];
+const App: React.FC<AppProps> = () => {
+  const [user, setUser] = useState<UserFormData>({});
+  const [doctorsData, setDoctorsData] = useState<DoctorCardProps[]>([]);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await AsyncStorage.getItem("user");
+        if (res !== null) {
+          const userData = JSON.parse(res) as UserFormData;
+          setUser(userData);
+        } else {
+          router.navigate("/auth/signin");
+        }
+      } catch (error) {
+        // Handle errors, e.g., parsing errors or AsyncStorage errors
+        console.error(error);
+      }
+    };
 
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    const fetcDoctors = async () => {
+      try {
+        const ressponse = await GetDoctors();
+        if (ressponse !== null) {
+          const doctors = JSON.parse(
+            JSON.stringify(ressponse.data)
+          ) as DoctorCardProps[];
+          setDoctorsData(doctors);
+        } else {
+          router.navigate("/auth/signin");
+        }
+      } catch (error) {
+        // Handle errors, e.g., parsing errors or AsyncStorage errors
+        console.error(error);
+      }
+    };
+
+    fetcDoctors();
+  }, []);
+  console.log("doctors");
+  console.log(doctorsData);
   return (
     <View style={styles.container}>
       <View style={styles.profileCardContainer}>
@@ -117,7 +118,7 @@ const App: React.FC<AppProps> = ({ route }: any) => {
             style={styles.profilePic}
           />
           <View style={styles.usernameContainer}>
-            <Text style={styles.usernameText}>JOLOMI OLAJIDE</Text>
+            <Text style={styles.usernameText}>{user.name}</Text>
           </View>
         </View>
         <View style={styles.actionIconContainer}>
@@ -141,10 +142,9 @@ const App: React.FC<AppProps> = ({ route }: any) => {
           {doctorsData.map((doctor, index) => (
             <DoctorCard
               key={index}
-              id={doctor.id}
+              _id={doctor._id}
               name={doctor.name}
-              specialty={doctor.specialty}
-              imageUri={doctor.imageUri}
+              avatar={doctor.avatar}
               user={user}
             />
           ))}

@@ -20,34 +20,25 @@ import { showToast } from "../../services/toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Profile() {
-  const FetchUserProfile = async (id: string) => {
-    var dat = await FetchProfile(id);
-
-    console.log(dat);
-    
-    setUserData({
-      _id: dat.data?._id,
-      email: dat.data?.email,
-      fullName: dat.data?.fullName,
-      dateOfBirth: dat.data?.dateOfBirth,
-      gender: dat.data?.gender,
-      address: dat.data?.address,
-    });
-  };
-  var user = "";
-  useEffect(() => {
-    (async () => {
-      user = (await AsyncStorage.getItem("user_id")) as string;
-
-      await FetchUserProfile(user);
-
-      console.log(userData);
-    })();
-  }, []);
-
   const [userData, setUserData] = useState<UserFormData>({});
   const [isloading, setIsLoading] = useState<boolean>(false);
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setIsLoading(true);
+      var user = await AsyncStorage.getItem("user");
+      var upuser = JSON.parse(user as string) as UserFormData;
+      var response = await FetchProfile(upuser._id as string);
+      if (!response.status) {
+        showToast(response.message as string);
+        setIsLoading(false);
+        return;
+      }
+      setUserData(response.data as UserFormData);
+      setIsLoading(false);
+    };
+    fetchProfile();
+  }, []);
   const HandleUpdateProfile = async () => {
     setIsLoading(true);
     var response = await UpdateProfile(userData);
@@ -73,7 +64,7 @@ export default function Profile() {
       />
 
       <Image
-        source={require("./../../assets/profile.jpeg")}
+        source={{ uri: userData.avatar }}
         style={{
           width: 100,
           height: 100,
@@ -104,6 +95,7 @@ export default function Profile() {
           <TextInput
             placeholder="Olajide Oluwaseun"
             style={styles.input}
+            value={userData.fullName}
             onChangeText={(value) =>
               setUserData({ ...userData, fullName: value })
             }
@@ -143,6 +135,7 @@ export default function Profile() {
           <TextInput
             placeholder="Male"
             style={styles.input}
+            value={userData.gender}
             onChangeText={(value) =>
               setUserData({ ...userData, gender: value })
             }
@@ -163,6 +156,7 @@ export default function Profile() {
           <TextInput
             placeholder="10/06/2003"
             style={styles.input}
+            value={userData.dateOfBirth?.toDateString()}
             onChangeText={(value) =>
               setUserData({ ...userData, dateOfBirth: new Date(value) })
             }
