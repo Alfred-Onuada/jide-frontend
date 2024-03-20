@@ -21,7 +21,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Profile() {
   const FetchUserProfile = async (id: string) => {
-    var dat = (await FetchProfile(id)) as LoginResponse;
+    var dat = await FetchProfile(id);
+
+    console.log(dat);
+    
     setUserData({
       _id: dat.data?._id,
       email: dat.data?.email,
@@ -30,14 +33,15 @@ export default function Profile() {
       gender: dat.data?.gender,
       address: dat.data?.address,
     });
-    console.log("dattt" + dat);
   };
   var user = "";
   useEffect(() => {
     (async () => {
       user = (await AsyncStorage.getItem("user_id")) as string;
-      console.log("lll" + user);
+
       await FetchUserProfile(user);
+
+      console.log(userData);
     })();
   }, []);
 
@@ -55,7 +59,6 @@ export default function Profile() {
     }
     //toast success
     setIsLoading(false);
-    console.log("successfull");
     showToast(response.message as string);
   };
   return (
@@ -121,6 +124,7 @@ export default function Profile() {
           <TextInput
             placeholder={userData.email}
             style={styles.input}
+            value={userData.email}
             onChangeText={(value) => setUserData({ ...userData, email: value })}
           ></TextInput>
         </View>

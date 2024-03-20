@@ -33,16 +33,18 @@ export async function UpdateProfile(
 export async function FetchProfile(id: string): Promise<LoginResponse> {
   try {
     const response = await axios.get(API.UPDATE_PROFILE + `/${id}`);
-    console.log("resp" + response.data);
+
     if (response.status === 400) {
       return { status: false, message: response.data.message };
     }
+
     return {
       status: true,
       message: "Success",
-      data: JSON.parse(response.data.data),
+      data: response.data.data,
     };
   } catch (error) {
+    console.log(error);
     if (axios.isAxiosError(error) && error.response) {
       return {
         status: false,

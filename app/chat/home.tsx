@@ -42,7 +42,6 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
         return require("../../assets/doctor1.png"); // default image
     }
   }
-  console.log(imageUri);
   const isLive = false;
   //   var user: UserFormData = {};
   //   useEffect(() => {
@@ -50,7 +49,6 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
   //       user = (await getFromLocalStorage<UserFormData>("user")) as UserFormData;
   //     })();
   //   });
-  console.log("kkkjs" + user);
 
   return (
     <View style={styles.doctorCardContainer}>
@@ -82,7 +80,6 @@ const App: React.FC<AppProps> = ({ route }: any) => {
   const { user: user } = useLocalSearchParams() as any as {
     user: UserFormData;
   };
-  console.log("user is" + user);
   const doctorsData = [
     {
       id: 1,

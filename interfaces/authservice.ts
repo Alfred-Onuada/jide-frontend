@@ -16,8 +16,8 @@ export async function handleLogin(
   try {
     const response: AxiosResponse = await axios.post(API.LOGIN, request);
     if (response.status === 200) {
-      AsyncStorage.setItem("user_id", response.data.data._id);
-      console.log("uuid" + AsyncStorage.getItem("user_id"));
+      await AsyncStorage.setItem("user_id", response.data.data._id);
+      console.log("uuid" + await AsyncStorage.getItem("user_id"));
       return { status: true, message: "Success", data: response.data.data };
     } else {
       return {
