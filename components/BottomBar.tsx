@@ -16,7 +16,7 @@ const BottomBar = () => {
   };
   const handlePressHistory = () => {
     console.log("History pressed");
-    router.navigate("chat/chathistory");
+    router.push("chat/chathistory");
   };
 
   // ... handle other icon presses similarly

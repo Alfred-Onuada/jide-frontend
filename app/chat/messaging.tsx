@@ -20,19 +20,23 @@ import {
 } from "react-native";
 import { UserFormData } from "../../types/RegistrationTypes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SendMessage } from "../../interfaces/userservice";
+import axios from "axios";
+import { API } from "../../constants/endpoints";
 
 // Define the type for each message
-type Message = {
-  id: string;
-  chatId: string;
-  sender: string;
-  senderName?: string;
-  text: string;
-  dateTime: Date;
-  profilepicture: string;
+export type Message = {
+  senderId?: string;
+  recipientId?: string;
+  roomId?: string;
+  text?: string;
+  _id?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
 };
 
-type MessageItemProps = {
+export type MessageItemProps = {
   message: Message;
   isSender: boolean;
 };
@@ -47,60 +51,12 @@ type MessagingScreenProps = {
 };
 
 // Mock messages data
-var initialMessages: Message[] = [
-  {
-    id: "1",
-    chatId: "1",
-    sender: "AI",
-    senderName: "AI Assistant",
-    text: "Hello! How can I help you today?",
-    dateTime: new Date("2024-01-01T12:00:00Z"),
-    profilepicture: "https://via.placeholder.com/50",
-  },
-  {
-    id: "2",
-    chatId: "1",
-    sender: "65fa04dfceafb78a75e12724",
-    text: "Hi! I'm having an issue with my account.",
-    dateTime: new Date("2024-01-01T12:01:00Z"),
-    profilepicture: "https://via.placeholder.com/50",
-  },
-  {
-    id: "3",
-    chatId: "1",
-    sender: "AI",
-    senderName: "AI Assistant",
-    text: "I'm sorry to hear that. Could you provide me with more details?",
-    dateTime: new Date("2024-01-01T12:02:00Z"),
-    profilepicture: "https://via.placeholder.com/50",
-  },
-  {
-    id: "4",
-    chatId: "1",
-    sender: "65fa04dfceafb78a75e12724",
-    text: "I've been charged incorrectly for my last transaction.",
-    dateTime: new Date("2024-01-01T12:03:00Z"),
-    profilepicture: "https://via.placeholder.com/50",
-  },
-  {
-    id: "5",
-    chatId: "1",
-    sender: "AI",
-    senderName: "AI Assistant",
-    text: "I see. Let me check that for you. Can you provide the transaction ID?",
-    dateTime: new Date("2024-01-01T12:04:00Z"),
-    profilepicture: "https://via.placeholder.com/50",
-  },
-  {
-    id: "6",
-    chatId: "1",
-    sender: "65fa04dfceafb78a75e12724",
-    text: "Sure, it's #123456789.",
-    dateTime: new Date("2024-01-01T12:05:00Z"),
-    profilepicture: "https://via.placeholder.com/50",
-  },
-];
-initialMessages.sort((a, b) => a.dateTime.getTime() - b.dateTime.getTime());
+var initialMessages: Message[] = [];
+initialMessages.sort(
+  (a, b) =>
+    new Date(a.createdAt as string).getTime() -
+    new Date(b.createdAt as string).getTime()
+);
 // MessageItem component
 const Header = () => (
   <View style={styles.header}>
@@ -119,9 +75,9 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, isSender }) => {
         isSender ? styles.senderRow : styles.receiverRow,
       ]}
     >
-      {!isSender && (
+      {/* {!isSender && (
         <Image source={{ uri: message.profilepicture }} style={styles.avatar} />
-      )}
+      )} */}
       <View
         style={[
           styles.messageBubble,
@@ -140,11 +96,19 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, isSender }) => {
 const MessagingScreen: React.FC<MessagingScreenProps> = ({
   route,
 }: MessagingScreenProps) => {
-  const { id: chatId, userID: users } = useLocalSearchParams() as any as {
+  const {
+    id: chatId,
+    receiverID: receiver,
+    roomID: room,
+  } = useLocalSearchParams() as any as {
     id: string;
-    userID: UserFormData;
+    receiverID: string;
+    roomID: string;
   };
   const [user, setUser] = useState<UserFormData>({});
+  const [roomID, setRoomId] = useState<string>("");
+  console.log(user._id);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -156,7 +120,6 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
           router.navigate("/auth/signin");
         }
       } catch (error) {
-        // Handle errors, e.g., parsing errors or AsyncStorage errors
         console.error(error);
       }
     };
@@ -165,24 +128,69 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
   }, []);
 
   const [messages, setMessages] = useState<Message[]>(
-    initialMessages.filter((message) => message.chatId === chatId)
+    initialMessages.filter((message) => message._id === chatId)
   );
   const [inputText, setInputText] = useState<string>("");
-
-  const handleSendMessage = () => {
-    const newMessage: Message = {
-      id: Math.random().toString(36).substring(7),
-      chatId: chatId,
-      sender: "65fa04dfceafb78a75e12724",
-      text: inputText,
-      dateTime: new Date(),
-      profilepicture: "https://via.placeholder.com/50", // Replace with actual profile picture
+  useEffect(() => {
+    const LoadMessages = async () => {
+      var messages = await AsyncStorage.getItem("doctormessages");
+      if (messages !== null) {
+        var messagess = JSON.parse(messages) as Message[];
+        messagess.forEach((x) => {
+          if (x.senderId == user._id && x._id == receiver) {
+            setMessages((messages) => [...messages, x]);
+          }
+        });
+        console.log("here messages restored");
+      }
     };
-    setMessages((messages) => [...messages, newMessage]);
-    setInputText("");
+    LoadMessages();
+  }, []);
+  useEffect(() => {
+    AsyncStorage.setItem("doctormessages", JSON.stringify(messages)).then(
+      (res) => {
+        console.log("here messages saved");
+      }
+    );
+  }, [messages]);
+  const handleSendMessage = async () => {
+    if (room || roomID) {
+      var message = await SendMessage({
+        senderId: user._id,
+        roomId: room,
+        text: inputText,
+      });
+      console.log("here");
+      console.log(message);
+      setRoomId(message.data?.roomId as string);
+      setMessages((messages) => [...messages, message.data as Message]);
+      setInputText("");
+    } else {
+      var message = await SendMessage({
+        senderId: user._id,
+        text: inputText,
+        recipientId: receiver,
+      });
+      console.log("here");
+      console.log(message);
+      setRoomId(message.data?.roomId as string);
+      setMessages((messages) => [...messages, message.data as Message]);
+      setInputText("");
+    }
+  };
+  const FetchMessages = () => {
+    if (roomID) {
+      axios.get(API.ROOMS + `/${room}` + "/messages").then((res) => {
+        if (res.status !== 200) return;
+        var message = res.data.message;
+        var messagess: Message[] = res.data.data;
+        setMessages(messagess);
+      });
+    }
   };
 
-  const isSender = (message: Message) => message.sender === user._id;
+  FetchMessages();
+  const isSender = (message: Message) => message.senderId === user._id;
   return (
     <SafeAreaView style={styles.container}>
       <Header />
@@ -194,7 +202,7 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
 
       <FlatList
         data={messages}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id as string}
         renderItem={({ item }) => (
           <MessageItem message={item} isSender={isSender(item)} />
         )}

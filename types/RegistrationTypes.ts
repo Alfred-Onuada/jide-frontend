@@ -1,4 +1,5 @@
 import { DoctorCardProps } from "../app/chat/home";
+import { Message } from "../app/chat/messaging";
 
 export interface UserFormData {
   username?: string;
@@ -30,6 +31,19 @@ export type AIMessageRequest = {
   message: string;
   userId: string;
 };
+
+export type SendMessageRequest = {
+  senderId?: string;
+  roomId?: string;
+  text?: string;
+  recipientId?: string;
+};
+
+export type MessagingResponse = {
+  status: boolean;
+  message?: string;
+  data?: Message;
+};
 export interface DoctorFormData {
   username: string;
   password: string;
@@ -39,6 +53,18 @@ export interface DoctorFormData {
   qualification: string;
   specialization: string;
 }
+export interface Room {
+  _id: string;
+  participants: string[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+export type MessageHistoryResponse = {
+  status: boolean;
+  message: string;
+  data?: Room[];
+};
 
 export type LoginRequest = {
   email: string;

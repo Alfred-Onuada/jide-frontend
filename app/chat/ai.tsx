@@ -137,7 +137,7 @@ const AICHAT: React.FC<MessagingScreenProps> = ({
       }
     };
     LoadMessages();
-  });
+  }, []);
   useEffect(() => {
     AsyncStorage.setItem("aimessages", JSON.stringify(messages)).then((res) => {
       console.log("here messages saved");

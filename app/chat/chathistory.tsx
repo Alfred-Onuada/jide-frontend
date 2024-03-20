@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Stack, useRouter, useLocalSearchParams } from "expo-router";
 import {
   SafeAreaView,
@@ -14,6 +14,9 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import { format } from "date-fns";
 import BottomBar from "../../components/BottomBar";
+import { Room, UserFormData } from "../../types/RegistrationTypes";
+import { FetchProfile, GetRooms } from "../../interfaces/userservice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Define the type for each chat history item
 type ChatHistoryItem = {
@@ -25,27 +28,35 @@ type ChatHistoryItem = {
 };
 
 // Mock chat history data
-const chatHistoryData: ChatHistoryItem[] = [
-  {
-    id: "1",
-    name: "Dr. Eleanor Pena",
-    lastMessage: "Ok, thanks for your time",
-    dateTime: new Date(),
-    avatar: "https://via.placeholder.com/50",
-  },
-  // ... add other history items
-];
 
 export default function App() {
   var router = useRouter();
   var localparam = useLocalSearchParams();
-  const renderChatHistoryItem = ({ item }: { item: ChatHistoryItem }) => {
+  const [userData, setUserData] = useState<UserFormData>({});
+  const [chatHistoryData, setChatHistoryData] = useState<Room[]>([]);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      var user = await AsyncStorage.getItem("user");
+      var upuser = JSON.parse(user as string) as UserFormData;
+      setUserData(upuser);
+      var rooms = await GetRooms(upuser._id as string);
+      setChatHistoryData(rooms.data as Room[]);
+    };
+    fetchProfile();
+  }, []);
+  const renderChatHistoryItem = ({ item }: { item: Room }) => {
+    console.log(item);
     return (
       <TouchableOpacity
         onPress={() =>
           router.push({
             pathname: "chat/messaging",
-            params: { id: item.id },
+            params: {
+              id: item._id,
+              receiverID: item._id,
+              roomID: item._id,
+            },
           })
         }
       >
@@ -56,12 +67,12 @@ export default function App() {
             }}
           />
 
-          <Image source={{ uri: item.avatar }} style={styles.avatar} />
+          {/* <Image source={{ uri: item.avatar }} style={styles.avatar} /> */}
           <View style={styles.textContainer}>
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.lastMessage}>{item.lastMessage}</Text>
+            {/* <Text style={styles.name}>{item.name}</Text> */}
+            <Text style={styles.lastMessage}>{item._id}</Text>
           </View>
-          <Text style={styles.time}>{format(item.dateTime, "p")}</Text>
+          {/* <Text style={styles.time}>{format(item.dateTime, "p")}</Text> */}
         </View>
       </TouchableOpacity>
     );
@@ -83,7 +94,7 @@ export default function App() {
       </View>
       <FlatList
         data={chatHistoryData}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         renderItem={renderChatHistoryItem}
       />
       <BottomBar />

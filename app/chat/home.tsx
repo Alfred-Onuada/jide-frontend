@@ -50,7 +50,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ _id, name, avatar, user }) => {
         onPress={() =>
           router.push({
             pathname: "/chat/messaging",
-            params: { id: _id, user },
+            params: { id: _id, receiverID: _id },
           })
         }
       >
@@ -106,8 +106,6 @@ const App: React.FC<AppProps> = () => {
 
     fetcDoctors();
   }, []);
-  console.log("doctors");
-  console.log(doctorsData);
   return (
     <View style={styles.container}>
       <View style={styles.profileCardContainer}>
