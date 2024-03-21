@@ -114,8 +114,6 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
   const [user, setUser] = useState<UserFormData>({});
   const [roomID, setRoomId] = useState<string>("");
 
-  console.log(user._id);
-
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -139,13 +137,6 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
   );
   const [inputText, setInputText] = useState<string>("");
 
-  useEffect(() => {
-    AsyncStorage.setItem("doctormessages", JSON.stringify(messages)).then(
-      (res) => {
-        console.log("here messages saved");
-      }
-    );
-  }, [messages]);
   const handleSendMessage = async () => {
     if (room || roomID) {
       var message = await SendMessage({
@@ -155,7 +146,8 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
       });
       console.log("here");
       console.log(message);
-      setRoomId(message.data?.roomId as string);
+      console.log(roomID);
+
       setMessages((messages) => [...messages, message.data as Message]);
       setInputText("");
     } else {
@@ -165,14 +157,25 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
         recipientId: receiver,
       });
       console.log("here");
+      setRoomId(message.data?.roomId as string);
       console.log(message);
       var doctormessage: AsyncStorageMessages = {
         recipient: receiver,
         roomID: message.data?.roomId,
         sender: user._id,
       };
-      var doctorstring = JSON.stringify(doctormessage);
-      await AsyncStorage.setItem("doctormessages", doctorstring);
+
+      var existing = await AsyncStorage.getItem("doctormessages");
+      var exxxx = JSON.parse(existing as string) as AsyncStorageMessages[];
+      if (exxxx === null) {
+        var loki: AsyncStorageMessages[] = [doctormessage];
+        var doctorstring = JSON.stringify(loki);
+        await AsyncStorage.setItem("doctormessages", doctorstring);
+      } else {
+        exxxx.push(doctormessage);
+        var doctorstring = JSON.stringify(exxxx);
+        await AsyncStorage.setItem("doctormessages", doctorstring);
+      }
       setRoomId(message.data?.roomId as string);
       setMessages((messages) => [...messages, message.data as Message]);
       setInputText("");
@@ -196,22 +199,24 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
       }
     }
   };
-
-  FetchMessages();
   useEffect(() => {
     const intervalId = setInterval(() => {
       FetchMessages();
-    }, 5000);
+    }, 10000);
     return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
     const LoadMessages = async () => {
       var messagese = await AsyncStorage.getItem("doctormessages");
-      if (messagese !== null) {
-        var messagess = JSON.parse(messagese) as AsyncStorageMessages;
-        if (user._id === messagess.sender && messagess.recipient === receiver) {
-          setRoomId(messagess.roomID as string);
+
+      var messagess = JSON.parse(messagese as string) as AsyncStorageMessages[];
+      console.log(messagess);
+      if (messagess !== null) {
+        var current = messagess.find((mes) => mes.recipient == receiver);
+        if (current) {
+          setRoomId(current.roomID as string);
+          console.log("Room ID" + roomID);
           FetchMessages();
         }
       }
