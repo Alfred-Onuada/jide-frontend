@@ -4,7 +4,7 @@ import {
   useLocalSearchParams,
   useNavigation,
 } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -143,6 +143,10 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
   const [messages, setMessages] = useState<Message[]>(
     initialMessages.filter((message) => message._id === chatId)
   );
+  const flatListRef = useRef<FlatList>(null);
+  useEffect(() => {
+    flatListRef?.current?.scrollToEnd({ animated: true });
+  }, [messages]);
   const [inputText, setInputText] = useState<string>("");
 
   const handleSendMessage = async () => {
@@ -157,6 +161,7 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
       console.log(roomID);
 
       setMessages((messages) => [...messages, message.data as Message]);
+
       setInputText("");
     } else {
       var message = await SendMessage({
@@ -209,6 +214,7 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
   useEffect(() => {
     const intervalId = setInterval(() => {
       FetchMessages();
+      flatListRef?.current?.scrollToEnd({ animated: true });
     }, 10000);
     return () => clearInterval(intervalId);
   }, []);
@@ -241,6 +247,7 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
       />
 
       <FlatList
+        ref={flatListRef}
         data={messages}
         keyExtractor={(item) => item._id as string}
         renderItem={({ item }) => (

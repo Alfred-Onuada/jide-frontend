@@ -4,7 +4,7 @@ import {
   useLocalSearchParams,
   useNavigation,
 } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -144,6 +144,10 @@ const AICHAT: React.FC<MessagingScreenProps> = ({
     });
   }, [messages]);
   const [inputText, setInputText] = useState<string>("");
+  const flatListRef = useRef<FlatList>(null);
+  useEffect(() => {
+    flatListRef?.current?.scrollToEnd({ animated: true });
+  });
 
   const handleSendMessage = async () => {
     const newMessage: Message = {
@@ -186,6 +190,7 @@ const AICHAT: React.FC<MessagingScreenProps> = ({
       />
 
       <FlatList
+        ref={flatListRef}
         data={messages}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
