@@ -15,8 +15,7 @@ import { UserFormData } from "../../types/RegistrationTypes";
 import { handleRegisterUser } from "../../interfaces/authservice";
 import showToast from "../../services/toast";
 import { saveToLocalStorage } from "../../utilities/localstorage";
-import { RootSiblingParent } from 'react-native-root-siblings';
-
+import { RootSiblingParent } from "react-native-root-siblings";
 
 const CreateAccountScreen = () => {
   const [userData, setUserData] = useState<UserFormData>({
@@ -34,14 +33,14 @@ const CreateAccountScreen = () => {
     setIsLoading(true);
     var response = await handleRegisterUser(userData);
     if (!response.status) {
-      showToast({msg: response.message as string, danger: true});
+      showToast({ msg: response.message as string, danger: true });
       console.log(response.data?._id);
       setIsLoading(false);
       return;
     }
     setIsLoading(false);
     saveToLocalStorage("user", response.data);
-    showToast({msg: response.message as string, danger: false});
+    showToast({ msg: response.message as string, danger: false });
     router.navigate("/chat/home");
   };
 
@@ -151,7 +150,11 @@ const CreateAccountScreen = () => {
           disabled={isLoading}
         >
           {isLoading ? (
-            <ActivityIndicator size="large" style={styles.inText} color="#FFF" />
+            <ActivityIndicator
+              size="large"
+              style={styles.inText}
+              color="#FFF"
+            />
           ) : (
             <Text style={styles.buttonText}>Create Student Account</Text>
           )}
@@ -164,7 +167,7 @@ const CreateAccountScreen = () => {
 const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 20,
-    paddingHorizontal: 5,
+    paddingHorizontal: 17,
   },
   inText: {
     textAlign: "center",
@@ -188,7 +191,7 @@ const styles = StyleSheet.create({
     color: "#2972FE",
     paddingBottom: 10,
     fontSize: 16,
-    left: 13,
+    left: 10,
   },
   button: {
     backgroundColor: "#2972FE", // blue background
