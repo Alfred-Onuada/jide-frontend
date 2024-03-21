@@ -41,6 +41,12 @@ export type MessageItemProps = {
   isSender: boolean;
 };
 
+export type AsyncStorageMessages = {
+  recipient?: string;
+  sender?: string;
+  roomID?: string;
+};
+
 // Define props for the MessagingScreen component
 type MessagingScreenProps = {
   route: {
@@ -107,6 +113,7 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
   };
   const [user, setUser] = useState<UserFormData>({});
   const [roomID, setRoomId] = useState<string>("");
+
   console.log(user._id);
 
   useEffect(() => {
@@ -131,21 +138,7 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
     initialMessages.filter((message) => message._id === chatId)
   );
   const [inputText, setInputText] = useState<string>("");
-  useEffect(() => {
-    const LoadMessages = async () => {
-      var messages = await AsyncStorage.getItem("doctormessages");
-      if (messages !== null) {
-        var messagess = JSON.parse(messages) as Message[];
-        messagess.forEach((x) => {
-          if (x.senderId == user._id && x._id == receiver) {
-            setMessages((messages) => [...messages, x]);
-          }
-        });
-        console.log("here messages restored");
-      }
-    };
-    LoadMessages();
-  }, []);
+
   useEffect(() => {
     AsyncStorage.setItem("doctormessages", JSON.stringify(messages)).then(
       (res) => {
@@ -173,23 +166,58 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
       });
       console.log("here");
       console.log(message);
+      var doctormessage: AsyncStorageMessages = {
+        recipient: receiver,
+        roomID: message.data?.roomId,
+        sender: user._id,
+      };
+      var doctorstring = JSON.stringify(doctormessage);
+      await AsyncStorage.setItem("doctormessages", doctorstring);
       setRoomId(message.data?.roomId as string);
       setMessages((messages) => [...messages, message.data as Message]);
       setInputText("");
     }
   };
-  const FetchMessages = () => {
-    if (roomID) {
-      axios.get(API.ROOMS + `/${room}` + "/messages").then((res) => {
-        if (res.status !== 200) return;
+  const FetchMessages = async () => {
+    if (room || roomID) {
+      try {
+        var res = await axios.get(API.ROOMS + `/${room}` + "/messages");
+        console.log("Room ID " + room);
+
+        if (res.status === 400) {
+          console.log(res.status);
+          return;
+        }
         var message = res.data.message;
         var messagess: Message[] = res.data.data;
         setMessages(messagess);
-      });
+      } catch (error: any) {
+        console.log(error.response.data);
+      }
     }
   };
 
   FetchMessages();
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      FetchMessages();
+    }, 5000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    const LoadMessages = async () => {
+      var messagese = await AsyncStorage.getItem("doctormessages");
+      if (messagese !== null) {
+        var messagess = JSON.parse(messagese) as AsyncStorageMessages;
+        if (user._id === messagess.sender && messagess.recipient === receiver) {
+          setRoomId(messagess.roomID as string);
+          FetchMessages();
+        }
+      }
+    };
+    LoadMessages();
+  }, []);
   const isSender = (message: Message) => message.senderId === user._id;
   return (
     <SafeAreaView style={styles.container}>

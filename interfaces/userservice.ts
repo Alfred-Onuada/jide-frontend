@@ -144,7 +144,7 @@ export async function GetRooms(
   request: string
 ): Promise<MessageHistoryResponse> {
   try {
-    const response = await axios.get(API.GET_DOCTORS);
+    const response = await axios.get(API.ROOMS + `/${request}`);
     if (response.status === 400) {
       return { status: false, message: response.data.message };
     }

@@ -34,19 +34,19 @@ export default function App() {
   var localparam = useLocalSearchParams();
   const [userData, setUserData] = useState<UserFormData>({});
   const [chatHistoryData, setChatHistoryData] = useState<Room[]>([]);
-
   useEffect(() => {
     const fetchProfile = async () => {
       var user = await AsyncStorage.getItem("user");
       var upuser = JSON.parse(user as string) as UserFormData;
       setUserData(upuser);
+
       var rooms = await GetRooms(upuser._id as string);
       setChatHistoryData(rooms.data as Room[]);
     };
     fetchProfile();
   }, []);
   const renderChatHistoryItem = ({ item }: { item: Room }) => {
-    console.log(item);
+    var receiver = item.participants.pop();
     return (
       <TouchableOpacity
         onPress={() =>
@@ -54,7 +54,7 @@ export default function App() {
             pathname: "chat/messaging",
             params: {
               id: item._id,
-              receiverID: item._id,
+              receiverID: receiver,
               roomID: item._id,
             },
           })
@@ -80,6 +80,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>History</Text>
         <Icon
