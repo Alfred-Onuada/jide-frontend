@@ -64,13 +64,17 @@ initialMessages.sort(
     new Date(b.createdAt as string).getTime()
 );
 // MessageItem component
-const Header = () => (
+type HeaderProps = {
+  avatar: string;
+  name: string;
+};
+const Header: React.FC<HeaderProps> = ({ avatar, name }) => (
   <View style={styles.header}>
     <Image
-      source={{ uri: "https://via.placeholder.com/50" }} // Replace with the actual image source
+      source={{ uri: avatar }} // Replace with the actual image source
       style={styles.doctorProfilePic}
     />
-    <Text style={styles.headerTitle}>Messaging</Text>
+    <Text style={styles.headerTitle}>{name}</Text>
   </View>
 );
 const MessageItem: React.FC<MessageItemProps> = ({ message, isSender }) => {
@@ -106,10 +110,14 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
     id: chatId,
     receiverID: receiver,
     roomID: room,
+    name: name,
+    avatar: avatar,
   } = useLocalSearchParams() as any as {
     id: string;
     receiverID: string;
     roomID: string;
+    name: string;
+    avatar: string;
   };
   const [user, setUser] = useState<UserFormData>({});
   const [roomID, setRoomId] = useState<string>("");
@@ -186,7 +194,6 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
       try {
         var res = await axios.get(API.ROOMS + `/${room}` + "/messages");
         console.log("Room ID " + room);
-
         if (res.status === 400) {
           console.log(res.status);
           return;
@@ -226,7 +233,7 @@ const MessagingScreen: React.FC<MessagingScreenProps> = ({
   const isSender = (message: Message) => message.senderId === user._id;
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <Header avatar={avatar} name={name} />
       <Stack.Screen
         options={{
           headerShown: false,

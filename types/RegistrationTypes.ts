@@ -58,6 +58,7 @@ export interface Room {
   participants: string[];
   createdAt: string;
   updatedAt: string;
+  profile?: UserFormData;
   __v: number;
 }
 export type MessageHistoryResponse = {

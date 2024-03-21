@@ -44,18 +44,19 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ _id, name, avatar, user }) => {
       onPress={() =>
         router.push({
           pathname: "/chat/messaging",
-          params: { id: _id, receiverID: _id },
+          params: { id: _id, receiverID: _id, name: name, avatar: avatar },
         })
-      }>
+      }
+    >
       <View style={styles.doctorCardContainer}>
-          <Image
-            resizeMode="cover"
-            source={{ uri: avatar }}
-            style={styles.doctorImage}
-          />
-          <View style={styles.doctorInfoContainer}>
-            <Text style={styles.doctorName}>{name}</Text>
-          </View>
+        <Image
+          resizeMode="cover"
+          source={{ uri: avatar }}
+          style={styles.doctorImage}
+        />
+        <View style={styles.doctorInfoContainer}>
+          <Text style={styles.doctorName}>{name}</Text>
+        </View>
       </View>
     </Pressable>
   );
@@ -86,12 +87,13 @@ const App: React.FC<AppProps> = () => {
   }, []);
 
   useEffect(() => {
-    const fetcDoctors = async () => {
+    const fetchDoctors = async () => {
       try {
-        const ressponse = await GetDoctors();
-        if (ressponse !== null) {
+        const response = await GetDoctors();
+        if (response !== null) {
+          console.log(response);
           const doctors = JSON.parse(
-            JSON.stringify(ressponse.data)
+            JSON.stringify(response.data)
           ) as DoctorCardProps[];
           setDoctorsData(doctors);
         } else {
@@ -103,7 +105,7 @@ const App: React.FC<AppProps> = () => {
       }
     };
 
-    fetcDoctors();
+    fetchDoctors();
   }, []);
   return (
     <View style={styles.container}>

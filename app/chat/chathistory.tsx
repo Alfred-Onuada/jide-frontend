@@ -25,6 +25,7 @@ type ChatHistoryItem = {
   lastMessage: string;
   dateTime: Date;
   avatar: string;
+  profile?: UserFormData;
 };
 
 // Mock chat history data
@@ -34,19 +35,59 @@ export default function App() {
   var localparam = useLocalSearchParams();
   const [userData, setUserData] = useState<UserFormData>({});
   const [chatHistoryData, setChatHistoryData] = useState<Room[]>([]);
+  const [userAvi, setUserAv] = useState<string>(
+    "https://via.placeholder.com/50"
+  );
+  const [username, setUserName] = useState<string>("");
   useEffect(() => {
     const fetchProfile = async () => {
       var user = await AsyncStorage.getItem("user");
       var upuser = JSON.parse(user as string) as UserFormData;
       setUserData(upuser);
-
       var rooms = await GetRooms(upuser._id as string);
-      setChatHistoryData(rooms.data as Room[]);
+      // rooms.data?.forEach(async (x) => {
+      //   var receiver: string = x.participants.find(
+      //     (res) => res !== userData._id
+      //   ) as string;
+      //   var rece = await FetchProfile(receiver);
+      //   x.profile = rece.data;
+      // });
+      const fetchProfilesAndUpdateRooms = async (
+        rooms: Room[]
+      ): Promise<Room[]> => {
+        const fetchPromises = rooms.map(async (room) => {
+          console.log("room");
+          console.log(room);
+          const receiver = room.participants[1];
+
+          if (!receiver) return room; // Or handle this case as needed
+
+          try {
+            const rece = await FetchProfile(receiver);
+            return { ...room, profile: rece.data };
+          } catch (error) {
+            console.error(error);
+            // Handle error (you might want to return room as is or handle differently)
+            return room;
+          }
+        });
+
+        return await Promise.all(fetchPromises);
+      };
+
+      const updatedRooms = await fetchProfilesAndUpdateRooms(
+        rooms.data as Room[]
+      );
+
+      setChatHistoryData(updatedRooms as Room[]);
     };
     fetchProfile();
   }, []);
   const renderChatHistoryItem = ({ item }: { item: Room }) => {
-    var receiver = item.participants.pop();
+    var receiver: string = item.participants.find(
+      (res) => res !== userData._id
+    ) as string;
+
     return (
       <TouchableOpacity
         onPress={() =>
@@ -56,6 +97,8 @@ export default function App() {
               id: item._id,
               receiverID: receiver,
               roomID: item._id,
+              name: item.profile?.name,
+              avatar: item.profile?.avatar,
             },
           })
         }
@@ -67,12 +110,12 @@ export default function App() {
             }}
           />
 
-          {/* <Image source={{ uri: item.avatar }} style={styles.avatar} /> */}
+          <Image source={{ uri: item.profile?.avatar }} style={styles.avatar} />
           <View style={styles.textContainer}>
-            {/* <Text style={styles.name}>{item.name}</Text> */}
-            <Text style={styles.lastMessage}>{item._id}</Text>
+            <Text style={styles.name}>{item.profile?.name}</Text>
+            {/* <Text style={styles.lastMessage}>{item._id}</Text> */}
           </View>
-          {/* <Text style={styles.time}>{format(item.dateTime, "p")}</Text> */}
+          <Text style={styles.time}>{format(item.updatedAt, "p")}</Text>
         </View>
       </TouchableOpacity>
     );
