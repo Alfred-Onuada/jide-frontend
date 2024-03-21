@@ -13,8 +13,10 @@ import {
 } from "react-native";
 import { UserFormData } from "../../types/RegistrationTypes";
 import { handleRegisterUser } from "../../interfaces/authservice";
-import { showToast } from "../../services/toast";
+import showToast from "../../services/toast";
 import { saveToLocalStorage } from "../../utilities/localstorage";
+import { RootSiblingParent } from 'react-native-root-siblings';
+
 
 const CreateAccountScreen = () => {
   const [userData, setUserData] = useState<UserFormData>({
@@ -32,14 +34,14 @@ const CreateAccountScreen = () => {
     setIsLoading(true);
     var response = await handleRegisterUser(userData);
     if (!response.status) {
-      showToast(response.message);
+      showToast({msg: response.message as string, danger: true});
       console.log(response.data?._id);
       setIsLoading(false);
       return;
     }
     setIsLoading(false);
     saveToLocalStorage("user", response.data);
-    showToast(response.message);
+    showToast({msg: response.message as string, danger: false});
     router.navigate("/chat/home");
   };
 
@@ -61,99 +63,101 @@ const CreateAccountScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Create Student Account</Text>
-        <Text style={styles.headerSubtitle}>
-          Enter with your Babcock Credentials
-        </Text>
-      </View>
+    <RootSiblingParent>
+      <ScrollView style={styles.container}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Create Student Account</Text>
+          <Text style={styles.headerSubtitle}>
+            Enter with your Babcock Credentials
+          </Text>
+        </View>
 
-      <TouchableOpacity
-        style={styles.profileUpload}
-        onPress={() => pickImage()}
-      >
-        <Image
-          style={styles.profileUploadIcon}
-          source={require("./../../assets/upload.png")} // replace with your local asset path or uri
-        />
-        <Text style={styles.profileUploadText}>Upload Photo Profile</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.profileUpload}
+          onPress={() => pickImage()}
+        >
+          <Image
+            style={styles.profileUploadIcon}
+            source={require("./../../assets/upload.png")} // replace with your local asset path or uri
+          />
+          <Text style={styles.profileUploadText}>Upload Photo Profile</Text>
+        </TouchableOpacity>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>School FullName</Text>
-        <TextInput
-          placeholder="School Fullname"
-          value={userData.fullName}
-          onChangeText={(value) =>
-            setUserData({ ...userData, fullName: value })
-          }
-          style={styles.input}
-        />
-        <Text style={styles.inputTitle}>School Email</Text>
-        <TextInput
-          placeholder="School Email"
-          value={userData.email}
-          onChangeText={(value) => setUserData({ ...userData, email: value })}
-          style={styles.input}
-        />
-        <Text style={styles.inputTitle}>Matric No</Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputTitle}>School FullName</Text>
+          <TextInput
+            placeholder="School Fullname"
+            value={userData.fullName}
+            onChangeText={(value) =>
+              setUserData({ ...userData, fullName: value })
+            }
+            style={styles.input}
+          />
+          <Text style={styles.inputTitle}>School Email</Text>
+          <TextInput
+            placeholder="School Email"
+            value={userData.email}
+            onChangeText={(value) => setUserData({ ...userData, email: value })}
+            style={styles.input}
+          />
+          <Text style={styles.inputTitle}>Matric No</Text>
 
-        <TextInput
-          placeholder="Matric No"
-          value={userData.matricNo}
-          onChangeText={(value) =>
-            setUserData({ ...userData, matricNo: value })
-          }
-          style={styles.input}
-        />
-        <Text style={styles.inputTitle}>Hospital Card No</Text>
+          <TextInput
+            placeholder="Matric No"
+            value={userData.matricNo}
+            onChangeText={(value) =>
+              setUserData({ ...userData, matricNo: value })
+            }
+            style={styles.input}
+          />
+          <Text style={styles.inputTitle}>Hospital Card No</Text>
 
-        <TextInput
-          placeholder="Hospital Card No"
-          value={userData.hospitalCardNo}
-          onChangeText={(value) =>
-            setUserData({ ...userData, hospitalCardNo: value })
-          }
-          style={styles.input}
-        />
-        <Text style={styles.inputTitle}>Password</Text>
+          <TextInput
+            placeholder="Hospital Card No"
+            value={userData.hospitalCardNo}
+            onChangeText={(value) =>
+              setUserData({ ...userData, hospitalCardNo: value })
+            }
+            style={styles.input}
+          />
+          <Text style={styles.inputTitle}>Password</Text>
 
-        <TextInput
-          placeholder="Password"
-          value={userData.password}
-          onChangeText={(value) =>
-            setUserData({ ...userData, password: value })
-          }
-          style={styles.input}
-          secureTextEntry
-        />
-        <Text style={styles.inputTitle}>Confirm Password</Text>
+          <TextInput
+            placeholder="Password"
+            value={userData.password}
+            onChangeText={(value) =>
+              setUserData({ ...userData, password: value })
+            }
+            style={styles.input}
+            secureTextEntry
+          />
+          <Text style={styles.inputTitle}>Confirm Password</Text>
 
-        <TextInput
-          placeholder="Confirm Password"
-          value={userData.confirmPassword}
-          onChangeText={(value) =>
-            setUserData({ ...userData, confirmPassword: value })
-          }
-          style={styles.input}
-          secureTextEntry
-        />
-      </View>
+          <TextInput
+            placeholder="Confirm Password"
+            value={userData.confirmPassword}
+            onChangeText={(value) =>
+              setUserData({ ...userData, confirmPassword: value })
+            }
+            style={styles.input}
+            secureTextEntry
+          />
+        </View>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleCreateAccount}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator size="large" style={styles.inText} color="#FFF" />
-        ) : (
-          <Text style={styles.buttonText}>Create Student Account</Text>
-        )}
-      </TouchableOpacity>
-    </ScrollView>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleCreateAccount}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator size="large" style={styles.inText} color="#FFF" />
+          ) : (
+            <Text style={styles.buttonText}>Create Student Account</Text>
+          )}
+        </TouchableOpacity>
+      </ScrollView>
+    </RootSiblingParent>
   );
 };
 

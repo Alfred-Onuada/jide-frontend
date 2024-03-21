@@ -12,8 +12,8 @@ import {
 } from "react-native";
 import { LoginRequest, UserFormData } from "../../types/RegistrationTypes";
 import { handleLogin } from "../../interfaces/authservice";
-import { showToast } from "../../services/toast";
-import Toast from "react-native-root-toast";
+import showToast from "../../services/toast";
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 export default function Signin() {
   const [email, setEmail] = useState<string>("");
@@ -28,93 +28,88 @@ export default function Signin() {
     };
     const response = await handleLogin(request);
     if (!response.status) {
-      Toast.show(response.message as string, {
-        duration: Toast.durations.SHORT,
-        position: Toast.positions.BOTTOM,
-        shadow: true,
-        animation: true,
-        hideOnPress: true,
-        delay: 0,
-      });
+      showToast({msg: response.message as string, danger: true});
       console.log(response);
       setIsLoading(false);
       return;
     }
     setIsLoading(false);
-    showToast(response.message as string);
+    showToast({msg: response.message as string, danger: false});
     router.push({
       pathname: "/chat/home",
       params: { user: response.data as UserFormData },
     });
   };
   return (
-    <View style={styles.container}>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
+    <RootSiblingParent>
+      <View style={styles.container}>
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+        />
 
-      <Image
-        source={require("./../../assets/icon.png")}
-        style={{
-          width: 200,
-          height: 200,
-          resizeMode: "cover",
-          marginVertical: 50,
-        }}
-      ></Image>
-      <Text style={{ fontSize: 18, marginTop: 20, marginBottom: 30 }}>
-        Sign In For Free
-      </Text>
+        <Image
+          source={require("./../../assets/icon.png")}
+          style={{
+            width: 200,
+            height: 200,
+            resizeMode: "cover",
+            marginVertical: 50,
+          }}
+        ></Image>
+        <Text style={{ fontSize: 18, marginTop: 20, marginBottom: 30 }}>
+          Sign In For Free
+        </Text>
 
-      <View
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          marginBottom: 10,
-        }}
-      >
-        <Text style={styles.inputLabel}>Email*</Text>
-        <TextInput
-          placeholder="john@google.com"
-          style={styles.input}
-          onChangeText={(e) => setEmail(e.toLocaleLowerCase())}
-        ></TextInput>
+        <View
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            marginBottom: 10,
+          }}
+        >
+          <Text style={styles.inputLabel}>Email*</Text>
+          <TextInput
+            placeholder="john@google.com"
+            style={styles.input}
+            onChangeText={(e) => setEmail(e.toLocaleLowerCase())}
+          ></TextInput>
+        </View>
+
+        <View style={{ width: "100%", display: "flex", alignItems: "center" }}>
+          <Text style={styles.inputLabel}>Password*</Text>
+          <TextInput
+            placeholder="john@google.com"
+            style={styles.input}
+            secureTextEntry
+            onChangeText={(e) => setPassword(e)}
+          ></TextInput>
+        </View>
+
+        <TouchableOpacity
+          style={styles.inBtn}
+          onPress={() => HandleSignin()}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator size="large" style={styles.inText} color="#FFF" />
+          ) : (
+            <Text style={styles.inText}>Sign In</Text>
+          )}
+        </TouchableOpacity>
+
+        <Text style={{ fontSize: 16, marginTop: 10 }}>
+          Don't have an account?{" "}
+          <Link href={"/auth/signup"} style={{ color: "#2972FE" }}>
+            Sign Up
+          </Link>
+        </Text>
+
+        <StatusBar style="auto" />
       </View>
-
-      <View style={{ width: "100%", display: "flex", alignItems: "center" }}>
-        <Text style={styles.inputLabel}>Password*</Text>
-        <TextInput
-          placeholder="john@google.com"
-          style={styles.input}
-          secureTextEntry
-          onChangeText={(e) => setPassword(e)}
-        ></TextInput>
-      </View>
-
-      <TouchableOpacity
-        style={styles.inBtn}
-        onPress={() => HandleSignin()}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator size="large" style={styles.inText} color="#FFF" />
-        ) : (
-          <Text style={styles.inText}>Sign In</Text>
-        )}
-      </TouchableOpacity>
-
-      <Text style={{ fontSize: 16, marginTop: 10 }}>
-        Don't have an account?{" "}
-        <Link href={"/auth/signup"} style={{ color: "#2972FE" }}>
-          Sign Up
-        </Link>
-      </Text>
-
-      <StatusBar style="auto" />
-    </View>
+    </RootSiblingParent>
   );
 }
 

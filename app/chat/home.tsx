@@ -40,25 +40,24 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ _id, name, avatar, user }) => {
   const isLive = false;
 
   return (
-    <View style={styles.doctorCardContainer}>
-      <Image
-        resizeMode="cover"
-        source={{ uri: avatar }}
-        style={styles.doctorImage}
-      />
-      <Pressable
-        onPress={() =>
-          router.push({
-            pathname: "/chat/messaging",
-            params: { id: _id, receiverID: _id },
-          })
-        }
-      >
-        <View style={styles.doctorInfoContainer}>
-          <Text style={styles.doctorName}>{name}</Text>
-        </View>
-      </Pressable>
-    </View>
+    <Pressable
+      onPress={() =>
+        router.push({
+          pathname: "/chat/messaging",
+          params: { id: _id, receiverID: _id },
+        })
+      }>
+      <View style={styles.doctorCardContainer}>
+          <Image
+            resizeMode="cover"
+            source={{ uri: avatar }}
+            style={styles.doctorImage}
+          />
+          <View style={styles.doctorInfoContainer}>
+            <Text style={styles.doctorName}>{name}</Text>
+          </View>
+      </View>
+    </Pressable>
   );
 };
 
@@ -162,7 +161,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   timeText: {
     fontFamily: "SF Pro Text",
@@ -181,7 +181,8 @@ const styles = StyleSheet.create({
   },
   chatContainer: {
     backgroundColor: "#2972FE",
-    margin: 20,
+    marginBottom: 20,
+    marginHorizontal: 20,
     borderRadius: 16,
     paddingVertical: 37,
     paddingHorizontal: 44,

@@ -16,8 +16,9 @@ import {
   getFromLocalStorage,
   saveToLocalStorage,
 } from "../../utilities/localstorage";
-import { showToast } from "../../services/toast";
+import showToast from "../../services/toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 export default function Profile() {
   const [userData, setUserData] = useState<UserFormData>({});
@@ -30,7 +31,7 @@ export default function Profile() {
       var upuser = JSON.parse(user as string) as UserFormData;
       var response = await FetchProfile(upuser._id as string);
       if (!response.status) {
-        showToast(response.message as string);
+        showToast({msg: response.message as string, danger: true});
         setIsLoading(false);
         return;
       }
@@ -43,160 +44,162 @@ export default function Profile() {
     setIsLoading(true);
     var response = await UpdateProfile(userData);
     if (!response.status) {
-      showToast(response.message as string);
+      showToast({msg: response.message as string, danger: true});
       console.log(response);
       setIsLoading(false);
       return;
     }
     //toast success
     setIsLoading(false);
-    showToast(response.message as string);
+    showToast({msg: response.message as string, danger: false});
   };
   return (
-    <View style={styles.container}>
-      <Stack.Screen
-        options={{
-          headerBackTitleVisible: false,
-          headerTitle: "My Profile",
-          headerTintColor: "#2972FE",
-          headerStyle: { backgroundColor: "#fff" },
-        }}
-      />
+    <RootSiblingParent>   
+      <View style={styles.container}>
+        <Stack.Screen
+          options={{
+            headerBackTitleVisible: false,
+            headerTitle: "My Profile",
+            headerTintColor: "#2972FE",
+            headerStyle: { backgroundColor: "#fff" },
+          }}
+        />
 
-      <Image
-        source={{ uri: userData.avatar }}
-        style={{
-          width: 100,
-          height: 100,
-          borderRadius: 50,
-          marginVertical: 20,
-        }}
-      ></Image>
+        <Image
+          source={{ uri: userData.avatar }}
+          style={{
+            width: 100,
+            height: 100,
+            borderRadius: 50,
+            marginVertical: 20,
+          }}
+        ></Image>
 
-      <View
-        style={{
-          width: "95%",
-          height: 1,
-          backgroundColor: "#EBEEF2",
-          marginBottom: 20,
-        }}
-      ></View>
+        <View
+          style={{
+            width: "95%",
+            height: 1,
+            backgroundColor: "#EBEEF2",
+            marginBottom: 20,
+          }}
+        ></View>
 
-      <View
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          marginBottom: 10,
-        }}
-      >
-        <Text style={styles.inputLabel}>Full Name*</Text>
-        <View style={styles.shadow}>
-          <TextInput
-            placeholder="Olajide Oluwaseun"
-            style={styles.input}
-            value={userData.fullName}
-            onChangeText={(value) =>
-              setUserData({ ...userData, fullName: value })
-            }
-          ></TextInput>
+        <View
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            marginBottom: 10,
+          }}
+        >
+          <Text style={styles.inputLabel}>Full Name*</Text>
+          <View style={styles.shadow}>
+            <TextInput
+              placeholder="Olajide Oluwaseun"
+              style={styles.input}
+              value={userData.fullName}
+              onChangeText={(value) =>
+                setUserData({ ...userData, fullName: value })
+              }
+            ></TextInput>
+          </View>
         </View>
-      </View>
 
-      <View
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          marginBottom: 10,
-        }}
-      >
-        <Text style={styles.inputLabel}>Email*</Text>
-        <View style={styles.shadow}>
-          <TextInput
-            placeholder={userData.email}
-            style={styles.input}
-            value={userData.email}
-            onChangeText={(value) => setUserData({ ...userData, email: value })}
-          ></TextInput>
+        <View
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            marginBottom: 10,
+          }}
+        >
+          <Text style={styles.inputLabel}>Email*</Text>
+          <View style={styles.shadow}>
+            <TextInput
+              placeholder={userData.email}
+              style={styles.input}
+              value={userData.email}
+              onChangeText={(value) => setUserData({ ...userData, email: value })}
+            ></TextInput>
+          </View>
         </View>
-      </View>
 
-      <View
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          marginBottom: 10,
-        }}
-      >
-        <Text style={styles.inputLabel}>Gender*</Text>
-        <View style={styles.shadow}>
-          <TextInput
-            placeholder="Male"
-            style={styles.input}
-            value={userData.gender}
-            onChangeText={(value) =>
-              setUserData({ ...userData, gender: value })
-            }
-          ></TextInput>
+        <View
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            marginBottom: 10,
+          }}
+        >
+          <Text style={styles.inputLabel}>Gender*</Text>
+          <View style={styles.shadow}>
+            <TextInput
+              placeholder="Male"
+              style={styles.input}
+              value={userData.gender}
+              onChangeText={(value) =>
+                setUserData({ ...userData, gender: value })
+              }
+            ></TextInput>
+          </View>
         </View>
-      </View>
 
-      <View
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          marginBottom: 10,
-        }}
-      >
-        <Text style={styles.inputLabel}>Date of Birth*</Text>
-        <View style={styles.shadow}>
-          <TextInput
-            placeholder="10/06/2003"
-            style={styles.input}
-            value={userData.dateOfBirth?.toDateString()}
-            onChangeText={(value) =>
-              setUserData({ ...userData, dateOfBirth: new Date(value) })
-            }
-          ></TextInput>
+        <View
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            marginBottom: 10,
+          }}
+        >
+          <Text style={styles.inputLabel}>Date of Birth*</Text>
+          <View style={styles.shadow}>
+            <TextInput
+              placeholder="10/06/2003"
+              style={styles.input}
+              value={userData.dateOfBirth?.toDateString()}
+              onChangeText={(value) =>
+                setUserData({ ...userData, dateOfBirth: new Date(value) })
+              }
+            ></TextInput>
+          </View>
         </View>
-      </View>
 
-      <View
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          marginBottom: 10,
-        }}
-      >
-        <Text style={styles.inputLabel}>Address*</Text>
-        <View style={styles.shadow}>
-          <TextInput
-            placeholder="Plot 10 Lekki Phase 5"
-            style={styles.input}
-            onChangeText={(value) =>
-              setUserData({ ...userData, address: value })
-            }
-          ></TextInput>
+        <View
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            marginBottom: 10,
+          }}
+        >
+          <Text style={styles.inputLabel}>Address*</Text>
+          <View style={styles.shadow}>
+            <TextInput
+              placeholder="Plot 10 Lekki Phase 5"
+              style={styles.input}
+              onChangeText={(value) =>
+                setUserData({ ...userData, address: value })
+              }
+            ></TextInput>
+          </View>
         </View>
-      </View>
 
-      <TouchableOpacity
-        style={styles.inBtn}
-        onPress={() => HandleUpdateProfile()}
-        disabled={isloading}
-      >
-        {isloading ? (
-          <ActivityIndicator size="large" style={styles.inText} color="#FFF" />
-        ) : (
-          <Text style={styles.inText}>Confirm</Text>
-        )}
-      </TouchableOpacity>
-      <StatusBar style="auto" />
-    </View>
+        <TouchableOpacity
+          style={styles.inBtn}
+          onPress={() => HandleUpdateProfile()}
+          disabled={isloading}
+        >
+          {isloading ? (
+            <ActivityIndicator size="large" style={styles.inText} color="#FFF" />
+          ) : (
+            <Text style={styles.inText}>Confirm</Text>
+          )}
+        </TouchableOpacity>
+        <StatusBar style="auto" />
+      </View>
+    </RootSiblingParent>
   );
 }
 
