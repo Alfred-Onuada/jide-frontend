@@ -4,6 +4,7 @@ import { Message } from "../app/chat/messaging";
 export interface UserFormData {
   username?: string;
   fullname?: string;
+  schoolName?: string;
   matricNo?: string;
   password?: string;
   cardNo?: string;

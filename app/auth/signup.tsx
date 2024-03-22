@@ -20,7 +20,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreateAccountScreen = () => {
   const [userData, setUserData] = useState<UserFormData>({
-    fullName: "",
+    schoolName: "",
+    fullname: "",
     matricNo: "",
     hospitalCardNo: "",
     password: "",
@@ -35,12 +36,10 @@ const CreateAccountScreen = () => {
     var response = await handleRegisterUser(userData);
     if (!response.status) {
       showToast({ msg: response.message as string, danger: true });
-      console.log(response.data?._id);
       setIsLoading(false);
       return;
     }
     setIsLoading(false);
-    saveToLocalStorage("user", response.data);
     showToast({ msg: response.message as string, danger: false });
     router.navigate("/chat/home");
   };
@@ -102,12 +101,21 @@ const CreateAccountScreen = () => {
         </TouchableOpacity>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.inputTitle}>School FullName</Text>
+        <Text style={styles.inputTitle}>FullName</Text>
           <TextInput
-            placeholder="School Fullname"
+            placeholder="Fullname"
             value={userData.fullname}
             onChangeText={(value) =>
               setUserData({ ...userData, fullname: value })
+            }
+            style={styles.input}
+          />
+          <Text style={styles.inputTitle}>School Name</Text>
+          <TextInput
+            placeholder="School Name"
+            value={userData.schoolName}
+            onChangeText={(value) =>
+              setUserData({ ...userData, schoolName: value })
             }
             style={styles.input}
           />

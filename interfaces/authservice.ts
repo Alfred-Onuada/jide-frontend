@@ -49,11 +49,10 @@ export async function handleRegisterUser(
       API.REGISTER_USER,
       request
     );
-    // console.log(response);
-    AsyncStorage.setItem("user_id", response.data.data._id);
-    console.log("uuid" + AsyncStorage.getItem("user_id"));
+    AsyncStorage.setItem("user", JSON.stringify(response.data.data) as string);
     return { status: true, message: "Success", data: response.data.data };
   } catch (error: any) {
+    console.log(error.response.data)
     try {
       return {
         status: false,
