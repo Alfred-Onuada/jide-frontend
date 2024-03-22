@@ -105,9 +105,9 @@ const CreateAccountScreen = () => {
           <Text style={styles.inputTitle}>School FullName</Text>
           <TextInput
             placeholder="School Fullname"
-            value={userData.fullName}
+            value={userData.fullname}
             onChangeText={(value) =>
-              setUserData({ ...userData, fullName: value })
+              setUserData({ ...userData, fullname: value })
             }
             style={styles.input}
           />
@@ -132,9 +132,9 @@ const CreateAccountScreen = () => {
 
           <TextInput
             placeholder="Hospital Card No"
-            value={userData.hospitalCardNo}
+            value={userData.cardNo}
             onChangeText={(value) =>
-              setUserData({ ...userData, hospitalCardNo: value })
+              setUserData({ ...userData, cardNo: value })
             }
             style={styles.input}
           />

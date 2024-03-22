@@ -3,10 +3,10 @@ import { Message } from "../app/chat/messaging";
 
 export interface UserFormData {
   username?: string;
-  fullName?: string;
+  fullname?: string;
   matricNo?: string;
   password?: string;
-  hospitalCardNo?: string;
+  cardNo?: string;
   confirmPassword?: string;
   email?: string;
   role?: string;

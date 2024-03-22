@@ -37,6 +37,7 @@ export default function Profile() {
         return;
       }
       setUserData(response.data as UserFormData);
+      console.log(response);
       setIsLoading(false);
     };
     fetchProfile();
@@ -112,9 +113,9 @@ export default function Profile() {
             <TextInput
               placeholder="Olajide Oluwaseun"
               style={styles.input}
-              value={userData.fullName}
+              value={userData.fullname}
               onChangeText={(value) =>
-                setUserData({ ...userData, fullName: value })
+                setUserData({ ...userData, fullname: value })
               }
             ></TextInput>
           </View>
@@ -170,7 +171,7 @@ export default function Profile() {
             marginBottom: 10,
           }}
         >
-          <Text style={styles.inputLabel}>Date of Birth*</Text>
+          {/* <Text style={styles.inputLabel}>Date of Birth*</Text>
           <View style={styles.shadow}>
             <TextInput
               placeholder="10/06/2003"
@@ -180,7 +181,7 @@ export default function Profile() {
                 setUserData({ ...userData, dateOfBirth: new Date(value) })
               }
             ></TextInput>
-          </View>
+          </View> */}
         </View>
 
         <View
@@ -191,7 +192,7 @@ export default function Profile() {
             marginBottom: 10,
           }}
         >
-          <Text style={styles.inputLabel}>Address*</Text>
+          {/* <Text style={styles.inputLabel}>Address*</Text>
           <View style={styles.shadow}>
             <TextInput
               placeholder="Plot 10 Lekki Phase 5"
@@ -200,7 +201,7 @@ export default function Profile() {
                 setUserData({ ...userData, address: value })
               }
             ></TextInput>
-          </View>
+          </View> */}
         </View>
 
         <TouchableOpacity

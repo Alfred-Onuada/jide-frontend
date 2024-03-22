@@ -91,7 +91,6 @@ const App: React.FC<AppProps> = () => {
       try {
         const response = await GetDoctors();
         if (response !== null) {
-          console.log(response);
           const doctors = JSON.parse(
             JSON.stringify(response.data)
           ) as DoctorCardProps[];
