@@ -8,7 +8,7 @@ import {
   UserRegistrationResponse,
 } from "../types/RegistrationTypes";
 import { saveToLocalStorage } from "../utilities/localstorage";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosResponse, isAxiosError } from "axios";
 
 export async function handleLogin(
   request: LoginRequest
@@ -54,18 +54,19 @@ export async function handleRegisterUser(
     console.log("uuid" + AsyncStorage.getItem("user_id"));
     if (response.status === 200 || response.status === 201) {
       return { status: true, message: "Success", data: response.data.data };
-    } else {
-      return {
-        status: false,
-        message: response.data.message,
-        data: response.data.data,
-      };
     }
   } catch (error: any) {
-    console.log("message" + error.response.data.errors);
-    return {
-      status: false,
-      message: "An unexpected error occurred",
-    };
+    try {
+      return {
+        status: false,
+        message: error.response.data.message,
+        data: error.response.data.data,
+      };
+    } catch (error) {
+      return {
+        status: false,
+        message: "An unexpected error occurred",
+      };
+    }
   }
 }
