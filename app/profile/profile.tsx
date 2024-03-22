@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { LoginResponse, UserFormData } from "../../types/RegistrationTypes";
 import { useEffect, useState } from "react";
@@ -18,7 +19,7 @@ import {
 } from "../../utilities/localstorage";
 import showToast from "../../services/toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { RootSiblingParent } from 'react-native-root-siblings';
+import { RootSiblingParent } from "react-native-root-siblings";
 
 export default function Profile() {
   const [userData, setUserData] = useState<UserFormData>({});
@@ -31,7 +32,7 @@ export default function Profile() {
       var upuser = JSON.parse(user as string) as UserFormData;
       var response = await FetchProfile(upuser._id as string);
       if (!response.status) {
-        showToast({msg: response.message as string, danger: true});
+        showToast({ msg: response.message as string, danger: true });
         setIsLoading(false);
         return;
       }
@@ -44,17 +45,28 @@ export default function Profile() {
     setIsLoading(true);
     var response = await UpdateProfile(userData);
     if (!response.status) {
-      showToast({msg: response.message as string, danger: true});
+      showToast({ msg: response.message as string, danger: true });
       console.log(response);
       setIsLoading(false);
       return;
     }
     //toast success
     setIsLoading(false);
-    showToast({msg: response.message as string, danger: false});
+    showToast({ msg: response.message as string, danger: false });
+  };
+  const handleLogout = async () => {
+    await AsyncStorage.clear();
+    router.navigate("/auth/signin");
+  };
+
+  const confirmLogout = () => {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "No" },
+      { text: "Yes", onPress: handleLogout },
+    ]);
   };
   return (
-    <RootSiblingParent>   
+    <RootSiblingParent>
       <View style={styles.container}>
         <Stack.Screen
           options={{
@@ -64,6 +76,9 @@ export default function Profile() {
             headerStyle: { backgroundColor: "#fff" },
           }}
         />
+        <TouchableOpacity style={styles.logoutButton} onPress={confirmLogout}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
 
         <Image
           source={{ uri: userData.avatar }}
@@ -119,7 +134,9 @@ export default function Profile() {
               placeholder={userData.email}
               style={styles.input}
               value={userData.email}
-              onChangeText={(value) => setUserData({ ...userData, email: value })}
+              onChangeText={(value) =>
+                setUserData({ ...userData, email: value })
+              }
             ></TextInput>
           </View>
         </View>
@@ -192,7 +209,11 @@ export default function Profile() {
           disabled={isloading}
         >
           {isloading ? (
-            <ActivityIndicator size="large" style={styles.inText} color="#FFF" />
+            <ActivityIndicator
+              size="large"
+              style={styles.inText}
+              color="#FFF"
+            />
           ) : (
             <Text style={styles.inText}>Confirm</Text>
           )}
@@ -204,6 +225,18 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
+  logoutButton: {
+    position: "absolute",
+    top: 40, // Adjust position as needed
+    right: 20,
+    padding: 10,
+    backgroundColor: "#2972FE", // Set a suitable color
+    borderRadius: 5,
+  },
+  logoutButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",

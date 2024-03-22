@@ -1,5 +1,5 @@
 import { Stack, router } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import {
   View,
@@ -16,6 +16,7 @@ import { handleRegisterUser } from "../../interfaces/authservice";
 import showToast from "../../services/toast";
 import { saveToLocalStorage } from "../../utilities/localstorage";
 import { RootSiblingParent } from "react-native-root-siblings";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreateAccountScreen = () => {
   const [userData, setUserData] = useState<UserFormData>({
@@ -60,6 +61,23 @@ const CreateAccountScreen = () => {
       setUserData({ ...userData, avatar: (result as any).base64 });
     }
   };
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const user = await AsyncStorage.getItem("user");
+        if (user !== null) {
+          router.push({
+            pathname: "/chat/home",
+            params: { user: user as UserFormData },
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    checkUser();
+  }, [router]);
 
   return (
     <RootSiblingParent>

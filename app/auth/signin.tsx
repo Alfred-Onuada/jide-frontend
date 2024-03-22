@@ -1,6 +1,6 @@
 import { Link, Stack, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,7 +13,8 @@ import {
 import { LoginRequest, UserFormData } from "../../types/RegistrationTypes";
 import { handleLogin } from "../../interfaces/authservice";
 import showToast from "../../services/toast";
-import { RootSiblingParent } from 'react-native-root-siblings';
+import { RootSiblingParent } from "react-native-root-siblings";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Signin() {
   const [email, setEmail] = useState<string>("");
@@ -28,18 +29,35 @@ export default function Signin() {
     };
     const response = await handleLogin(request);
     if (!response.status) {
-      showToast({msg: response.message as string, danger: true});
+      showToast({ msg: response.message as string, danger: true });
       console.log(response);
       setIsLoading(false);
       return;
     }
     setIsLoading(false);
-    showToast({msg: response.message as string, danger: false});
+    showToast({ msg: response.message as string, danger: false });
     router.push({
       pathname: "/chat/home",
       params: { user: response.data as UserFormData },
     });
   };
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const user = await AsyncStorage.getItem("user");
+        if (user !== null) {
+          router.push({
+            pathname: "/chat/home",
+            params: { user: user as UserFormData },
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    checkUser();
+  }, [router]);
   return (
     <RootSiblingParent>
       <View style={styles.container}>
@@ -94,7 +112,11 @@ export default function Signin() {
           disabled={isLoading}
         >
           {isLoading ? (
-            <ActivityIndicator size="large" style={styles.inText} color="#FFF" />
+            <ActivityIndicator
+              size="large"
+              style={styles.inText}
+              color="#FFF"
+            />
           ) : (
             <Text style={styles.inText}>Sign In</Text>
           )}
