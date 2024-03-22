@@ -52,9 +52,7 @@ export async function handleRegisterUser(
     // console.log(response);
     AsyncStorage.setItem("user_id", response.data.data._id);
     console.log("uuid" + AsyncStorage.getItem("user_id"));
-    if (response.status === 200 || response.status === 201) {
-      return { status: true, message: "Success", data: response.data.data };
-    }
+    return { status: true, message: "Success", data: response.data.data };
   } catch (error: any) {
     try {
       return {
