@@ -216,6 +216,7 @@ const styles = StyleSheet.create({
     borderRadius: 25, // rounded corners
     paddingVertical: 18, // vertical padding
     paddingHorizontal: 20, // horizontal padding
+    marginHorizontal: 20,
     alignItems: "center",
     justifyContent: "center",
     height: 55, // fixed height for the button
@@ -230,6 +231,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
+    marginHorizontal: 20,
     padding: 16,
     borderRadius: 100, // circular border if the image is a circle
     backgroundColor: "#ECF0F1", // light grey background
