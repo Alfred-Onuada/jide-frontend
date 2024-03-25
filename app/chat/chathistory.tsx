@@ -58,7 +58,7 @@ export default function App() {
         const fetchPromises = rooms.map(async (room) => {
           console.log("room");
           console.log(room);
-          const receiver = room.participants[1];
+          const receiver =  room.participants.find(res => res !== userData._id) as string;
 
           if (!receiver) return room; // Or handle this case as needed
 

@@ -22,6 +22,8 @@ export default function Signin() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const HandleSignin = async () => {
+    console.log(email);
+    console.log(password);
     setIsLoading(true);
     const request: LoginRequest = {
       email: email,

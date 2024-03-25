@@ -56,7 +56,7 @@ export default function App() {
               </Text>
               <View
                 style={{
-                  marginVertical: 40,
+                  marginVertical: 20,
                   display: "flex",
                   flexDirection: "row",
                 }}
@@ -94,7 +94,7 @@ export default function App() {
               </Text>
               <View
                 style={{
-                  marginVertical: 40,
+                  marginVertical: 20,
                   display: "flex",
                   flexDirection: "row",
                 }}
@@ -136,7 +136,7 @@ export default function App() {
               </Text>
               <View
                 style={{
-                  marginVertical: 40,
+                  marginVertical: 20,
                   display: "flex",
                   flexDirection: "row",
                 }}
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   bottomStyle: {
     backgroundColor: "#fff",
-    height: 500,
+    height: "55%",
     width: "100%",
     position: "absolute",
     bottom: 0,
@@ -184,7 +184,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
     display: "flex",
-    justifyContent: "center",
+    // justifyContent: "center",
+    paddingTop: 30,
     alignItems: "center",
   },
   btnTextNext: {

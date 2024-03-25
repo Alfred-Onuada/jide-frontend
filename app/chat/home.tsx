@@ -122,7 +122,7 @@ const App: React.FC<AppProps> = () => {
         <View style={styles.actionIconContainer}>
           <Image
             resizeMode="cover"
-            source={require("./../../assets/profile.jpeg")}
+            source={{uri: user.avatar}}
             style={styles.actionIcon}
           />
         </View>
@@ -135,7 +135,9 @@ const App: React.FC<AppProps> = () => {
             <Text style={styles.chatText}>Chat with Our SmartAi</Text>
           </View>
         </TouchableOpacity>
-        <Text style={styles.availableDoctorsText}>Available Doctors</Text>
+        {user.role === "patient" && (
+        <Text style={styles.availableDoctorsText}>Available Doctors</Text> )}
+        {user.role === "patient" && (
         <View style={styles.doctorsListContainer}>
           {doctorsData.map((doctor, index) => (
             <DoctorCard
@@ -146,7 +148,9 @@ const App: React.FC<AppProps> = () => {
               user={user}
             />
           ))}
+          
         </View>
+        )}
       </ScrollView>
       <BottomBar />
     </View>

@@ -1,11 +1,11 @@
 {
   "expo": {
     "scheme": "com.jide.me",
-    "name": "jide-frontend",
+    "name": "SmartDoc",
     "slug": "jide-frontend",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/Group.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/icon.png",
@@ -20,15 +20,24 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/Group.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.m.i.jidefrontend"
     },
     "web": {
-      "favicon": "./assets/icon.png"
+      "favicon": "./assets/Group.png"
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "95482368-4d5a-4865-bbaf-cefabf19d3c0"
+      }
+    }
   }
 }
